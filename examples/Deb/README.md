@@ -4,7 +4,9 @@ Deb et al. (2002).
 Each example can be used with the SGAP, MOOP, and NSGA2P algorithms.  For
 example, to run the NSGA2P on the FON problem, you would type
 
+```
   >> fon(@nsga2p, 100, 30, .7, .01)
+```
 
 where 100 = population size, 30 = number of generations, .7 = probability
 of crossover, .01 = mutation rate.  When running MOOP, the .7 would be the
