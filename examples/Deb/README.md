@@ -1,5 +1,5 @@
 This directory contains multi-objective optimization problems from 
-Deb et al. (2002).
+[Deb et al. (2002)](https://pdfs.semanticscholar.org/dc4e/c99d4201affa93f404c6b4e4f8538d07aeb5.pdf).
 
 Each example can be used with the SGAP, MOOP, and NSGA2P algorithms.  For
 example, to run the NSGA2P on the FON problem, you would type
