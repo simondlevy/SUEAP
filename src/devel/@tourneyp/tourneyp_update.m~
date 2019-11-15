@@ -1,0 +1,35 @@
+% sueap_update.m - population-updating script for use by serial and parallel
+% (SuEAP) implementations of TOURNEYP.  Must be script (not function) because 
+% of Matlab_MPI.
+[newpop(1), bestfit] = fittest(sueap_pop, sueap_fits);
+
+fprintf('Gen: %5d / %-5d \tBest: %f\n', sueap_gen, sueap_ngen, bestfit)
+
+for j = 2 : length(sueap_pop)
+  c1 = randindex(sueap_pop);
+  c2 = randindex(sueap_pop);
+  if sum(sueap_fits(c1,:)) > sum(sueap_fits(c2,:))
+    better = c1;
+    worse = c2;
+  else
+    better = c2;
+    worse = c1;
+  end
+
+  if rand < theta
+    newpop(j) = sueap_pop(better);
+  else
+    newpop(j) = sueap_pop(worse);
+  end
+end
+  
+for j = 2:length(newpop)
+    newpop(j) = mutate(newpop(j), scalemu(mu, sueap_gen, sueap_ngen));
+end
+  
+sueap_pop = newpop;
+
+allpops{sueap_gen} = newpop;
+allfits{sueap_gen} = sueap_fits;
+
+ 
