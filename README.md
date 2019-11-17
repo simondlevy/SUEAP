@@ -1,1 +1,1 @@
-<img src="nsga2_fon.gif" width=500>
+<img src="movie.gif" width=500>
