@@ -25,4 +25,6 @@ in the animation above, based on the fitness function from
 ## Parallel fitness evaluation
 
 To try out parallel fitness evaluation, you should first download, install, and test the
-[PECON](https://github.com/simondlevy/PECON) repository.
+[PECON](https://github.com/simondlevy/PECON) repository.  Then take a look at the 
+[testm](https://raw.githubusercontent.com/simondlevy/SUEAP/master/examples/slowfit/testm.m) script to see 
+how to run fitness evaluation in parallel.

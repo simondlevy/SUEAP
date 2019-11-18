@@ -1,4 +1,5 @@
 function testm(pobj)
+% Tests a deliberately slow fitness function with and without parallelism.
 %
 % Copyright (c) 2019 Simon D. Levy
 %
