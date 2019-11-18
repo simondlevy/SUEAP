@@ -1,6 +1,6 @@
 <img src="movie.gif" width=500>
 
-This repository contains Matlab class libraries and example code for three kinds of evolutionary (genetic) 
+This repository contains a Matlab class library and example code for three kinds of evolutionary (genetic) 
 algorithm:
 
 1. The [Standard Genetic Algorithm](https://mitpress.mit.edu/books/introduction-genetic-algorithms)
@@ -9,7 +9,7 @@ algorithm:
 
 3. [Random-Mutation Hill-Climbing](http://www.cleveralgorithms.com/nature-inspired/stochastic/hill_climbing_search.html), to use as a baseline for comparsion.
 
-
+The library also supports parallel fitness evaluation (on multi-core or cluster machines).
 
 ## Quickstart
 
