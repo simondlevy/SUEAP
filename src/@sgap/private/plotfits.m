@@ -1,5 +1,9 @@
 function plotfits(fits, dims, lims, gen, ngen)
 % visualize fitnesses for SGAP
+%
+% Copyright (c) 2019 Simon D. Levy
+%
+% MIT License
 
 PAUSE_SECONDS = 1.0;
 STYLE = 'b+';

@@ -1,4 +1,8 @@
 function x = newmember
+%
+% Copyright (c) 2019 Simon D. Levy
+%
+% MIT License
 
 x(1) = bounded_random(0, 1);
 

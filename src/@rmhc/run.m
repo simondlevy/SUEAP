@@ -12,6 +12,10 @@ function [allpops,allfits,robj] = run(robj, stru, ngen, varargin)
 %   FITNESS(STRU) Returns fitness of S as a vector
 % 
 %   MUTATE(STRU, MU) Returns copy of S mutated with proability or factor MU 
+%
+% Copyright (c) 2019 Simon D. Levy
+%
+% MIT License
 
 pop{1} = stru;
 

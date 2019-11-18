@@ -6,6 +6,11 @@ function [winner,maxfit] = fittest(pop, fits)
 % fitness by taking mean over dimensions.
 %
 % [WINNER,MAXFIT] = FITTEST(POP, FITS) also returns winner's fitness
+%
+% Copyright (c) 2019 Simon D. Levy
+%
+% MIT License
+
 maxfit = -Inf;
 
 for i = 1:length(pop)

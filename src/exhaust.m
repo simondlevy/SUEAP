@@ -8,6 +8,10 @@ function combos = exhaust(lims, mincmbs, filter)
 %
 %     COMBOS = EXHAUST(LIMS, MINCMBS, FILTER) accepts a handle to a
 %     function that filters out illegal combinations.
+%
+%     Copyright (c) 2019 Simon D. Levy
+%
+%     MIT License
 
 ndims = size(lims, 1);
 

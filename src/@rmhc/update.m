@@ -1,4 +1,8 @@
 function newpop = update(robj, pop, fits, gen, ngen)
+%
+% Copyright (c) 2019 Simon D. Levy
+%
+% MIT License
 
 % first time 'round
 if length(pop) == 1

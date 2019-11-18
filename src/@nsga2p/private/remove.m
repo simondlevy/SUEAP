@@ -2,6 +2,10 @@ function newpop = remove(pop, subpop)
 % Remove sub-population.  Instead of comparing members by their contents,
 % or keeping a separate list of member indices, we store an index in each
 % population member.  Member identity then equals index identity.
+%
+% Copyright (c) 2019 Simon D. Levy
+%
+% MIT License
 
 newinds = setdiff(getinds(pop), getinds(subpop));
 

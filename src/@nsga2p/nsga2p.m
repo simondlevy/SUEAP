@@ -18,7 +18,11 @@ function nobj = nsga2p(pc, mu, varargin)
 %    where LIMS is  four-dimensional vector of axis limits for  
 %    visualization: [XMIN XMAX YMIN YMAX]
 %
-%  See also NSGA2P/RUN
+% See also NSGA2P/RUN
+%
+% Copyright (c) 2019 Simon D. Levy
+%
+% MIT License
 
 % store params
 nobj.mu = mu;

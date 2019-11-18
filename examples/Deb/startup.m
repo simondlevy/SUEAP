@@ -1,4 +1,8 @@
 % this avoids excecution on non-Unix platforms
+%
+% Copyright (c) 2019 Simon D. Levy
+%
+% MIT License
 if ~isempty(getenv('ARCH'))
 
   home = getenv('HOME');

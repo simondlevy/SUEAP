@@ -1,5 +1,9 @@
 function I = sortdim(I, m)
 % sort population members I by objective dimension m
+%
+% Copyright (c) 2019 Simon D. Levy
+%
+% MIT License
 
 L = length(I);
 M = length(I{1}.fitness);

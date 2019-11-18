@@ -27,5 +27,9 @@ function [allpops,allfits,mobj] = run(mobj, pop, ngen, varargin)
 %   'SAVEGEN', <SAVEGEN> Save population every SAVEGEN generations
 %
 %   'SAVENAME', <SAVENAME> Filename for saving (default = sueap.mat) 
+%
+% Copyright (c) 2019 Simon D. Levy
+%
+% MIT License
 
 [allpops,allfits] = srun(mobj, pop, ngen, varargin{:});

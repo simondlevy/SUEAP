@@ -6,6 +6,10 @@ function child = stcross(sobj, parent1, parent2)
 %     the value of that field from either PARENT1 or PARENT2.  If
 %     parents do not have identical field names, an error is thrown.
 %     SOBJ is a SUEAP object (MOOP object, SGAP object, etc.).
+%
+% Copyright (c) 2019 Simon D. Levy
+%
+% MIT License
 
 fn1 = fieldnames(parent1);
 fn2 = fieldnames(parent2);

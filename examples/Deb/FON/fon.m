@@ -3,6 +3,10 @@ function [pops,fits] = fon(algo, popsize, ngen, pc_or_phi, mu, seed)
 % problem for testing NSGA-II.  
 %
 % FON(ALGORITHM, POPSIZE, NGEN, PC_OR_PHI, MU, [SEED])
+%
+% Copyright (c) 2019 Simon D. Levy
+%
+% MIT License
 
 init(nargin)
 

@@ -1,4 +1,8 @@
 function f = fitness(x)
+%
+% Copyright (c) 2019 Simon D. Levy
+%
+% MIT License
 
 A1 = 0.5*sin(1) - 2*cos(1) + sin(2) + 1.5*cos(2);
 A2 = 1.5*sin(1) - cos(1) + 2*sin(2) - 0.5*cos(2);

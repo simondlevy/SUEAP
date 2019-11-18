@@ -11,5 +11,9 @@ function pop = getfront(nobj)
 % Our NSGA-II implementation combines each population member's genome with
 % its fitness.  So in order to return just the genomes to the user, we need
 % to extract them from the combined representation.
+%
+% Copyright (c) 2019 Simon D. Levy
+%
+% MIT License
 
 pop = extract_genomes(nobj.Pt);

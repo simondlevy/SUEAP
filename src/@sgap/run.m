@@ -18,5 +18,9 @@ function [allpops,allfits,sobj] = run(sobj, pop, ngen, varargin)
 %
 %   CROSSOVER(P1, P2) Returns a "child" object made by crossing
 %   over "parent" objects P1 and P2
+%
+% Copyright (c) 2019 Simon D. Levy
+%
+% MIT License
 
 [allpops,allfits] = srun(sobj, pop, ngen, varargin{:});

@@ -1,6 +1,10 @@
 function I = crowding_distance_assignment(I)
 % From same-named algorithm of Deb et al. (2002).
 % Attaches crowding distances to population members in I.
+%
+% Copyright (c) 2019 Simon D. Levy
+%
+% MIT License
 
 % number of solutions in I
 L = length(I);

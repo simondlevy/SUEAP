@@ -1,6 +1,10 @@
 function Qt1 = make_new_pop(obj, Pt1, gen, ngen)
 % Make child population from parents.  This is a bit of messy glue code
 % between NSGA-II and SuEAP.
+%
+% Copyright (c) 2019 Simon D. Levy
+%
+% MIT License
 
 % goal is N children
 N = length(Pt1);

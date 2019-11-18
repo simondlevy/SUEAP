@@ -23,6 +23,10 @@ function sobj = sgap(pc, mu, varargin)
 %    visualization: [XMIN XMAX YMIN YMAX]
 %
 %  See also SGAP/RUN
+%
+% Copyright (c) 2019 Simon D. Levy
+%
+% MIT License
 
 sobj.mu = mu;
 sobj.pc = pc;

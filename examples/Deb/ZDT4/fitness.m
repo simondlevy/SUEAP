@@ -1,4 +1,8 @@
 function f = fitness(x)
+%
+% Copyright (c) 2019 Simon D. Levy
+%
+% MIT License
 
 f(1) = x(1);
 

@@ -22,6 +22,10 @@ function [allpops,allfits] = sgap(pop, ngen, pc, pm)
 % ALLPOPS.
 %
 % See also FITTEST
+%
+% Copyright (c) 2019 Simon D. Levy
+%
+% MIT License
 
 % make cell array out of params
 funargs = {pc pm};

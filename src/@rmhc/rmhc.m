@@ -11,6 +11,10 @@ function robj = rmhc(mu, varargin)
 %  supports reproducible results
 %
 %  See also RMHC/RUN
+%
+% Copyright (c) 2019 Simon D. Levy
+%
+% MIT License
 
 robj.mu = mu;
 

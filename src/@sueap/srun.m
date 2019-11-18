@@ -2,6 +2,10 @@ function [allpops,allfits,sobj] = srun(sobj, pop, ngen, varargin)
 % SRUN should be called by your implementing class (MOOP, SGAP, ...).  SRUN
 % takes care of the parallel fitness evaluation and then calls the UPDATE
 % function of the implementing class.
+%
+% Copyright (c) 2019 Simon D. Levy
+%
+% MIT License
 
 % grab defaults
 [pobj,init,haltfun,savegen,savename]  = getopts(sobj, varargin, ...

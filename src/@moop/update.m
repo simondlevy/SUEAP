@@ -1,5 +1,9 @@
 function [newpop,mobj] = update(mobj, pop, fits, gen, ngen)
 % get next population and front based on fitness of current pop.
+%
+% Copyright (c) 2019 Simon D. Levy
+%
+% MIT License
 
 % separate the frontier elements in a separate data structure
 [front,notfront] = getfront(mobj, fits);

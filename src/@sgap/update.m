@@ -1,4 +1,8 @@
 function [newpop,sobj] = update(sobj, pop, fits, gen, ngen)
+%
+% Copyright (c) 2019 Simon D. Levy
+%
+% MIT License
 
 % visualize fitnesees if indicated
 if ~isempty(sobj.visdims)

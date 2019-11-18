@@ -33,9 +33,11 @@ function mobj = moop(phi, mu, varargin)
 %    where LIMS is  four-dimensional vector of axis limits for  
 %    visualization: [XMIN XMAX YMIN YMAX]
 %
-%  See also MOOP/RUN
-
-% fprintf('USING MOOP\n')
+% See also MOOP/RUN
+%
+% Copyright (c) 2019 Simon D. Levy
+%
+% MIT License
 
 mobj.phi = phi;
 mobj.mu = mu;

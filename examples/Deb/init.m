@@ -4,6 +4,10 @@ function init(n)
 % population, so that different algorithms can be compared on the same
 % initial population.  This does not seed the random-number-generator
 % for the algorithm itself.
+%
+% Copyright (c) 2019 Simon D. Levy
+%
+% MIT License
 
 if n > 5
     rand('state', 0)

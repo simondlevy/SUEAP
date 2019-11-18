@@ -4,6 +4,10 @@ function [front,notfront] = getfront(mobj, fits)
 % FRONT =  GETFRONT(MOBJ, FITS) goes through all fitsnesses in FITS.
 % It returns FRONT, an array of the indices on the frontier based
 % on the weights W of each of the fitnesses in FITS.  
+%
+% Copyright (c) 2019 Simon D. Levy
+%
+% MIT License
 
 p = length(fits);
 n = length(fits{1});

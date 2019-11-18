@@ -1,4 +1,8 @@
 function tester(n, doplot)
+%
+% Copyright (c) 2019 Simon D. Levy
+%
+% MIT License
 
 colors = 'rkmbg';
 

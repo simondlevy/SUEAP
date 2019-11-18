@@ -20,6 +20,10 @@ function [allpops,allfits] = tourneyp(pop, ngen, theta, mu)
 % ALLPOPS.
 %
 % See also FITTEST
+%
+% Copyright (c) 2019 Simon D. Levy
+%
+% MIT License
 
 % make cell array out of params
 funargs = {theta mu};

@@ -1,4 +1,8 @@
 function testm(pobj)
+%
+% Copyright (c) 2019 Simon D. Levy
+%
+% MIT License
 
 SEED = 0;
 POPSIZE = 100;

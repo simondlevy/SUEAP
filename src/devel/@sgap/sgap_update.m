@@ -1,5 +1,10 @@
 function newpop = sgap_update(pop, fits, gen, ngen, args)
+%
+%  Copyright (c) 2019 Simon D. Levy
+%
+%  MIT License
 
+    
 % extract params from args
 pc = args{1};
 pm = args{2};

@@ -1,6 +1,10 @@
 function mu = scalemu(sobj, gen, ngen)
 % Mutation scaled to fraction of generations completed, a la simulated 
 % annealing.  Called automatically by SUEAP/UPDATE to scale mutation rate.
+%
+% Copyright (c) 2019 Simon D. Levy
+%
+% MIT License
 
 smu = getfield(struct(sobj), 'mu');
 

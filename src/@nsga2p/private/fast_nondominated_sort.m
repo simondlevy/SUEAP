@@ -2,6 +2,10 @@ function F = fast_nondominated_sort(P)
 % From same-named algorithm of Deb et al. (2002).
 % Returns a set of non-dominated fronts F of population P,
 % sorted by non-domination ranks. 
+%
+% Copyright (c) 2019 Simon D. Levy
+%
+% MIT License
 
 % i is the front-counter and is initialized to one
 i = 1;

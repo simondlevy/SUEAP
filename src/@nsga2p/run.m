@@ -20,7 +20,11 @@ function [allpops,allfits,allranks] = run(obj, pop, ngen, varargin)
 %
 %   CROSSOVER(P1, P2) Returns a "child" object made by crossing
 %   over "parent" objects P1 and P2
-
+%
+% Copyright (c) 2019 Simon D. Levy
+%
+% MIT License
+  
 
 [allpops,allfits,obj] = srun(obj, pop, ngen, varargin{:});
 

@@ -1,5 +1,9 @@
 function sobj = sueap(args)
 % superclass constructor for SuEAP objects; initializes random seed
+%
+% Copyright (c) 2019 Simon D. Levy
+%
+% MIT License
 
 sobj.seed = Inf;
 

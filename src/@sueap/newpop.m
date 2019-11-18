@@ -20,6 +20,10 @@ function pop = newpop(sobj, struname, popsize, varargin)
 %    Note that this option initializes all objects to have the same
 %    data contents.  If you want separate data for each object, you
 %    should skip NEWPOP and create each object yourself.
+%
+% Copyright (c) 2019 Simon D. Levy
+%
+% MIT License
 
 % assume no initialization data
 data = [];

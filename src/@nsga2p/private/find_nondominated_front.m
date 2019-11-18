@@ -2,6 +2,10 @@ function P1 = find_nondominated_front(P)
 % From same-named algorithm of Deb et al. (2002).  Our implementation 
 % differs in detail from Deb's, but does the same O(N^2) comparisons of 
 % every member of the population with every other.
+%
+% Copyright (c) 2019 Simon D. Levy
+%
+% MIT License
 
 
 % start with nobody on front

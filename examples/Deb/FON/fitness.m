@@ -1,4 +1,8 @@
 function f = fitness(x)
+%
+% Copyright (c) 2019 Simon D. Levy
+%
+% MIT License
 
 p = 1 / sqrt(3);
 

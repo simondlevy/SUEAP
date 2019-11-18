@@ -2,6 +2,10 @@ function [pops,fits] = allone(popsize, ngen, pc, mu)
 % ALLONE  Use SGAP to evolve strings of all 1's.
 %
 %   [POPS,FITS] = ALLONE(POPSIZE, NGEN, PC, MU)
+%
+% Copyright (c) 2019 Simon D. Levy
+%
+% MIT License
 
 % create SGAP object
 s = sgap(pc, mu);

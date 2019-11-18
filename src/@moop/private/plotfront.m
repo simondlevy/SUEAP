@@ -1,5 +1,9 @@
 function plotfronts(fits, front, notfront, dims, lims, gen, ngen)
 % visualize frontier and non-frontier fitnesses for MOOP
+%
+% Copyright (c) 2019 Simon D. Levy
+%
+% MIT License
 
 PAUSE_SECONDS = 1.0;
 STYLE_FRONT = 'r+';

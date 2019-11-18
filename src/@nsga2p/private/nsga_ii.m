@@ -6,6 +6,10 @@ function [Pt1, Qt1] = nsga_ii(obj, gen, ngen, Pt, Qt)
 % index. We also pass in a SuEAP object and the count of current and
 % total generations, in order to take advantage of SuEAP methods and do
 % additional compuations.
+%
+% Copyright (c) 2019 Simon D. Levy
+%
+% MIT License
 
 % our goal is to get N members into Pt1
 N = length(Qt);

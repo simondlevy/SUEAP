@@ -4,6 +4,10 @@ function plotfronts(F, dims, lims, gen, ngen)
 % indicates the crowding distance associated with that member.  Members
 % that do not make it into the next population are given a common
 % arbitrary size and colored grey.
+%
+% Copyright (c) 2019 Simon D. Levy
+%
+% MIT License
 
 COLORS = 'rkmbg';
 PAUSE_SECONDS = 0; %0.5;

@@ -1,5 +1,9 @@
 function varargout = getopts(s, varargs, names, defaults)
 % get name/attribute options for SUEAP constructors
+%
+% Copyright (c) 2019 Simon D. Levy
+%
+% MIT License
 
 for j = 1:length(defaults)
   varargout{j} = defaults{j};

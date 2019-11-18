@@ -1,5 +1,9 @@
 function wheel = roulette(fits)
 % make roulette wheel from one-dimensional fitnesses array
+%
+%     Copyright (c) 2019 Simon D. Levy
+%
+%     MIT License
 
 % normalize fitnesses
 fits = fits - min(fits);
