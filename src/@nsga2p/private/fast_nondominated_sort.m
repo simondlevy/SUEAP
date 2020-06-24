@@ -7,9 +7,7 @@ function F = fast_nondominated_sort(P)
 %
 % MIT License
 
-% i is the front-counter and is initialized to one
-i = 1;
-
+% empty fronts lists to start
 F = {};
 
 while ~isempty(P)
@@ -43,9 +41,6 @@ while ~isempty(P)
 
     % remove the non-dominated solutions from P
     P = remove(P, Fi);
-    
-    % increment the front-counter
-    i = i + 1;
     
     F{end+1} = Fi;
 end
