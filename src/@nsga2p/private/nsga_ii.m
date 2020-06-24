@@ -20,6 +20,8 @@ Rt = popunion(Pt, Qt);
 % F = (F_1, F_2, ...), all non-dominated fronts of Rt
 F = fast_nondominated_sort(Rt);
 
+fprintf('    %d\n', length(F))
+
 % next parent population initially empty
 Pt1 = {};
 

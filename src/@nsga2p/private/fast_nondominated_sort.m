@@ -18,14 +18,18 @@ while ~isempty(P)
     % look at each fitness in the population
     for i = 1:length(P)
         
+        p = P{i};
+        
         % assume undominateded
         dominated = false;
         
         % compare it with everyone (including itself, costs less time)
         for j = 1:length(P)
             
+            q = P{j};
+            
             % if it's dominated by anyone, mark it as such and stop looking
-            if dominates(P{j}, P{i})
+            if dominates(q, p)
                 dominated = true;
                 break
             end
@@ -34,7 +38,7 @@ while ~isempty(P)
         
         % add to front if not dominated
         if ~dominated
-            Fi{end+1} = P{i};
+            Fi{end+1} = p;
         end
         
     end
