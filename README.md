@@ -28,3 +28,8 @@ To try out parallel fitness evaluation, you should first download, install, and 
 [PECON](https://github.com/simondlevy/PECON) repository.  Then take a look at the 
 [testm](https://raw.githubusercontent.com/simondlevy/SUEAP/master/examples/slowfit/testm.m) script to see 
 how to run fitness evaluation in parallel.
+
+## Python version
+
+This [repository](https://github.com/simondlevy/nsga2) has a Python version of NSGA-II.  It currently does not support parallel execution.
+
