@@ -31,5 +31,19 @@ how to run fitness evaluation in parallel.
 
 ## Python version
 
-This [repository](https://github.com/simondlevy/nsga2) has a Python version of NSGA-II.
+The python folder has a Python version of NSGA-II.
 
+## Citing SUEAP
+
+```
+@InProceedings{SUEAP2005,
+    title     = {Cheap and Easy Parallelism for Matlab on Linux Clusters},
+    year      = {2005},
+    author    = {Levy, S.D. and Djalaliev, P. and Shrestha, J.M. and Khasymski, A. 
+                 and Connors, C.},
+    booktitle = {Proceedings of the 18th International Conference on Parallel 
+                 and Distributed Computing Systems},
+    publisher = { International Society for Computers and their Applications},
+    address   = {Las Vegas, Nevada}
+}
+```
