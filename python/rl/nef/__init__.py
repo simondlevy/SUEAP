@@ -1,6 +1,15 @@
 '''
 A simple agent for reinforcement learning using the Neural Engineering Framework
 
+Based on
+
+@techreport {stewart2012d,
+  title = {A Technical Overview of the Neural Engineering Framework},
+  year = {2012},
+  institution = {Centre for Theoretical Neuroscience},
+  pdf = {http://compneuro.uwaterloo.ca/files/publications/stewart.2012d.pdf},
+}
+
 Copyright (C) 2020 Simon D. Levy
 
 MIT License
