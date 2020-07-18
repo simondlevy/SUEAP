@@ -14,15 +14,15 @@ NSGA-II
 
 The library supports parallel fitness evaluation (on multi-core or cluster machines).
 
-## Quickstart
+## Matlab Quickstart
 
-1. Add SUEAP to your Matlab path (<b>Home / Set Path / Add with Subfolders ...</b>).
+1. Add SUEAP/matlab to your Matlab path (<b>Home / Set Path / Add with Subfolders ...</b>).
 
 2. In the Matlab interpreter, run ```fon(@nsga2p, 100, 30, .7, .01)```.  This should produce a sequence of figures as
 in the animation above, based on the fitness function from
 [Fonseca and Fleming (1993)](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.48.9077&rep=rep1&type=pdf).
 
-## Parallel fitness evaluation
+## Matlab Parallel fitness evaluation
 
 To try out parallel fitness evaluation, you should first download, install, and test the
 [PECON](https://github.com/simondlevy/PECON) repository.  Then take a look at the 
@@ -31,5 +31,5 @@ how to run fitness evaluation in parallel.
 
 ## Python version
 
-This [repository](https://github.com/simondlevy/nsga2) has a Python version of NSGA-II.  It currently does not support parallel execution.
+This [repository](https://github.com/simondlevy/nsga2) has a Python version of NSGA-II.
 
