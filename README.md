@@ -29,9 +29,21 @@ To try out parallel fitness evaluation, you should first download, install, and 
 [testm](https://raw.githubusercontent.com/simondlevy/SUEAP/master/examples/slowfit/testm.m) script to see 
 how to run fitness evaluation in parallel.
 
-## Python version
+## Python Quickstart
 
-The <b>python</b> folder has a Python version of NSGA-II.
+```
+cd python/nsga2
+python3 fon.py
+```
+
+This will show you the performance of NSGA-II on the fitness function from
+[Fonseca and Fleming (1993)](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.48.9077&rep=rep1&type=pdf).
+
+To install nsga2 for use in other projects:
+
+```
+sudo python3 setup.py install
+```
 
 ## Citing SUEAP
 
