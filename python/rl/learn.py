@@ -157,7 +157,6 @@ def main():
     # A single agent will be used to evaluate new parameters
     agent = Agent()
 
-    main_to_worker_queues = []
     # Use all available CPUs, distributing the population equally among them
     workers_count = mp.cpu_count()
     parents_per_worker = args.pop_size // workers_count
