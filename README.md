@@ -31,7 +31,7 @@ how to run fitness evaluation in parallel.
 
 ## Python version
 
-The python folder has a Python version of NSGA-II.
+The <b>python</b> folder has a Python version of NSGA-II.
 
 ## Citing SUEAP
 
