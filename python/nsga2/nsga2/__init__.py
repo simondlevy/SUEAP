@@ -10,6 +10,7 @@ from nsga2.algorithms import nsga_ii
 import numpy as np
 from multiprocessing import Pool, cpu_count
 from time import sleep
+import abc
 
 class _Plotter:
     '''
@@ -90,7 +91,7 @@ def pick(P):
     '''
     return np.random.choice(tuple(P))
 
-class Problem:
+class Problem(metaclass=abc.ABCMeta):
     '''
     A class for multiobjective optimization problems
     '''
@@ -130,6 +131,14 @@ class Problem:
 
         return Q
 
+
+    @abc.abstractmethod
+    def eval(p):
+        '''
+        Evaluates and returns the fitness of individual p.
+        Your subclass should override this method.
+        '''
+        return None
 
 class NSGA2:
 
