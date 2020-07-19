@@ -203,14 +203,14 @@ class Problem(metaclass=abc.ABCMeta):
 
 class NSGA2:
 
-    def __init__(self, problem, N):
+    def __init__(self, problem, pop_size=100):
         '''
         Inputs:
-            problem An object subclassing nsga2.Problem
-            N       Population size
+            problem  An object subclassing nsga2.Problem
+            pop_size Population size
         '''
         self.problem = problem
-        self.N = N
+        self.pop_size = pop_size
 
     def animate(self, G, axes=(0,1), imagename=None):
         '''
@@ -241,13 +241,13 @@ class NSGA2:
 
     def _run(self, G, plotter):
 
-        P = set([_Individual(self.problem.x()) for _ in range(self.N)])
+        P = set([_Individual(self.problem.x()) for _ in range(self.pop_size)])
         self._eval_fits(P)
         Q = set()
 
         for g in range(G):
 
-            P = _nsga_ii(P, Q, self.N, self.problem.fsiz, self.problem.fmin, self.problem.fmax)
+            P = _nsga_ii(P, Q, self.pop_size, self.problem.fsiz, self.problem.fmin, self.problem.fmax)
             Q = self.problem.make_new_pop(P, g, G)     
             plotter.update(P,g,G)
             sleep(1.0)
