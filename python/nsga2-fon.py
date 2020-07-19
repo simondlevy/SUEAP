@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 import numpy as np
 
-from sueap.nsga2 import Problem, NSGA2
+from sueap import Problem
+from sueap.nsga2 import NSGA2
 
 class Fon(Problem):
 

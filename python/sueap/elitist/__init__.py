@@ -18,5 +18,11 @@ class Elitist:
         self.max_gen = np.iinfo(np.uint32).max if max_gen is None else max_gen
         self.max_fitness = np.inf if max_fitness is None else max_fitness
 
+    def run(self):
+
+        return
+
+
+
 
 
