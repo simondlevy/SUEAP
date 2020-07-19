@@ -7,6 +7,11 @@ MIT License
 '''
 
 import abc
+import numpy as np
+import multiprocessing as mp
+from time import sleep
+
+# Algorithms ---------------------------------------------------------------------------------------
 
 def _fast_non_dominated_sort(P):
 
@@ -48,7 +53,7 @@ def _crowding_distance_assignment(I, fsiz, fmin, fmax):
         for i in range(1,len(I)-1):              # for all other points
             I[i].distance += (I[i+1].f[m] - I[i-1].f[m]) /(fmax[m] - fmin[m])
 
-def nsga_ii(P, Q, N, fsiz, fmin, fmax):
+def _nsga_ii(P, Q, N, fsiz, fmin, fmax):
 
     # Core algorithm from Deb et al. (2002)
     R = list(P.union(Q))                                            # Combine parent and offspring population
@@ -62,6 +67,90 @@ def nsga_ii(P, Q, N, fsiz, fmin, fmax):
     P = P.union(F[i][:(N-len(P))])                                  # Choose the first (N-|P_{t+1}) elements of F_i
 
     return P
+
+# Internal classes ----------------------------------------------------------------------------------
+
+class _Plotter:
+    '''
+    A class for animated 2D fitness plots
+    '''
+
+    def __init__(self, fmin, fmax, axes, imagename):
+
+        import matplotlib.pyplot as plt
+
+        self.fig, self.ax = plt.subplots()
+        self.ln, = plt.plot([], [], 'r.')
+        self.ax.set_xlim((fmin[0], fmax[0]))
+        self.ax.set_ylim((fmin[1], fmax[1]))
+        self.ax.set_xlabel('$f_%d$' % axes[0])
+        self.ax.set_ylabel('$f_%d$' % axes[1])
+        self.ax.set_aspect('equal')
+
+        self.imagename = imagename
+        self.g = None
+        self.gprev = None
+        self.plt = plt
+        self.axes = axes
+        self.ani = None
+        self.done = False
+
+    def start(self):
+
+        from matplotlib.animation import FuncAnimation
+
+        self.ani = FuncAnimation(self.fig, self._animate, blit=False)
+        self.plt.show()
+
+    def _animate(self, _):
+
+        if self.imagename is not None:
+            if self.g is not None:
+                if self.g != self.gprev:
+                    self.plt.savefig('%s_%04d.png' % (self.imagename, self.g))
+                    self.gprev = self.g
+
+        if not self.done:
+            return self.ln,
+
+    def update(self, P, g, G):
+
+        P = list(P)
+        self.ln.set_data([p.f[self.axes[0]] for p in P], [p.f[self.axes[1]] for p in P])
+        self.ax.set_title('%d/%d' % (g+1,G))
+        self.g = g
+
+class _Individual:
+    '''
+    A class for representing an individual from a population
+    '''
+
+    def __init__(self, x):
+
+        self.x = x
+
+        self.f        = None
+        self.S        = None
+        self.rank     = None
+        self.n        = None
+        self.distance = None
+
+    def __lt__(self, other):
+
+        return np.all(self.f < other.f)
+
+    def __str__(self):
+
+        return str(self.f)
+
+def pick(P):
+    '''
+    Returns a randomly-chosen individual from set P
+    '''
+    return np.random.choice(tuple(P))
+
+
+# Exported classes ----------------------------------------------------------------------------------
 
 class Problem(metaclass=abc.ABCMeta):
     '''
@@ -158,7 +247,7 @@ class NSGA2:
 
         for g in range(G):
 
-            P = nsga_ii(P, Q, self.N, self.problem.fsiz, self.problem.fmin, self.problem.fmax)
+            P = _nsga_ii(P, Q, self.N, self.problem.fsiz, self.problem.fmin, self.problem.fmax)
             Q = self.problem.make_new_pop(P, g, G)     
             plotter.update(P,g,G)
             sleep(1.0)
@@ -168,7 +257,7 @@ class NSGA2:
 
         P = list(P)
 
-        with Pool(processes=cpu_count()) as pool:
+        with mp.Pool(processes=mp.cpu_count()) as pool:
 
             for p,f in zip(P, pool.map(self.problem.eval, P)):
                 p.f = f
