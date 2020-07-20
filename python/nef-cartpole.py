@@ -34,7 +34,7 @@ class NefCartPole:
 
         for _ in range(episodes):
 
-            episode_reward, episode_steps = self._run_episode(params)
+            episode_reward, episode_steps = self.run_episode(params)
 
             total_reward += episode_reward
             total_steps += episode_steps
@@ -48,7 +48,7 @@ class NefCartPole:
 
         return d+noise_std*np.random.randn(*d.shape)
 
-    def _run_episode(self, params, env='CartPole-v0', render=False):
+    def run_episode(self, params, env='CartPole-v0', render=False):
 
         # Build env
         env = gym.make(env)
@@ -112,5 +112,5 @@ if __name__ == '__main__':
 
     best = e.run(10, max_fitness=2000)
 
-    print(p, best)
+    p.run_episode(best, render=True)
 
