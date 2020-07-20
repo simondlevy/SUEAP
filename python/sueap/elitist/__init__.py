@@ -53,7 +53,7 @@ class Elitist:
             population.sort(key=lambda p: p[1], reverse=True)
 
             # Report and store current state
-            self._report(population, self.parents_count, gen_idx, batch_steps, t_start)
+            self._report(population, gen_idx, batch_steps, t_start)
 
             # Get new best
             best = population[0]
@@ -120,7 +120,7 @@ class Elitist:
 
         fits = [p[1] for p in population[:self.parents_count]]
         speed = batch_steps / (time.time() - t_start)
-        print('%04d: fitness=%+6.2f\tfitness=%+6.2f\tfitness=%6.2f\tspeed=%d f/s' % (
+        print('%04d: mean fitness=%+6.2f\tmax fitness=%+6.2f\tstd fitness=%6.2f\tspeed=%d f/s' % (
             gen_idx, np.mean(fits), np.max(fits), np.std(fits), int(speed)))
 
     def _update_workers(self, population, main_to_worker_queues, parents_per_worker, parents_count):
