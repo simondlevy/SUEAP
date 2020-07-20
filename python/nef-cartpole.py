@@ -14,18 +14,18 @@ from sueap.elitist import Elitist
 
 class NefCartPole:
 
-    def __init__(self, n=10):
+    def __init__(self, neurons=10):
 
         # Encoder
-        self.alpha = np.random.uniform(0, 100, n) # tuning parameter alpha
-        self.b = np.random.uniform(-20,+20, n)    # tuning parameter b
-        self.e = np.random.uniform(-1, +1, (4,n)) # encoder weights
+        self.alpha = np.random.uniform(0, 100, neurons) # tuning parameter alpha
+        self.b = np.random.uniform(-20,+20, neurons)    # tuning parameter b
+        self.e = np.random.uniform(-1, +1, (4,neurons)) # encoder weights
 
-        self.n = n
+        self.neurons = neurons
 
     def new_params(self):
 
-       return np.random.uniform(-1, +1, (self.n,1)) # decoder weights
+       return np.random.uniform(-1, +1, (self.neurons,1)) # decoder weights
 
     def eval_params(self, params, episodes=10):
 

@@ -24,6 +24,10 @@ class Fon(Problem):
     def eval(p):
         return np.array((1 - np.exp(-np.sum((p.x-1/np.sqrt(3))**2)), (1 - np.exp(-np.sum((p.x+1/np.sqrt(3))**2)))))
 
+    @staticmethod
+    def mutate(p, g, G):
+        p.x += np.random.randn(3) * Fon.PM * (G-g)/G
+
     @property
     def fmin(self):
         return 0,0
@@ -45,10 +49,6 @@ class Fon(Problem):
 
         k = np.random.randint(3-1) + 1
         return np.append(p.x[:k], q.x[k:])
-
-    @staticmethod
-    def mutate(p, g, G):
-        p.x += np.random.randn(3) * Fon.PM * (G-g)/G
 
 if __name__ == '__main__':
 
