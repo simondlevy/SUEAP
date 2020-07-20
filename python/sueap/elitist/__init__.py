@@ -25,7 +25,7 @@ class Elitist:
         self.noise_std = noise_std
         self.parents_count = parents_count
 
-    def run(self, ngen):
+    def run(self, ngen, max_fitness=None):
         '''
         Returns fittest individual.
         '''
@@ -37,9 +37,8 @@ class Elitist:
         # Set up communication with workers
         main_to_worker_queues, worker_to_main_queue, workers = self._setup_workers(ngen, workers_count, parents_per_worker)
 
-        # This will store the fittest individual in the population and its reward
+        # This will store the fittest individual in the population and its fitness
         best = None
-        best_reward = None
 
         # Loop for specified number of generations (default = inf)
         for gen_idx in range(ngen):
@@ -54,7 +53,7 @@ class Elitist:
             if best is not None:
                 population.append(best)
 
-            # Sort population by reward (fitness)
+            # Sort population by fitness
             population.sort(key=lambda p: p[1], reverse=True)
 
             # Report and store current state
@@ -66,10 +65,10 @@ class Elitist:
             # Mutate the learnable parameters for each individual in the population
             population = [(self.problem, self.problem.mutate_params(p[0], self.noise_std)) for p in population]
 
-            # Quit if maximum reward reached
-            #if max_reward is not None and best_reward >= max_reward:
-            #    halt_workers(main_to_worker_queues)
-            #    break
+            # Quit if maximum fitness reached
+            if max_fitness is not None and best[1] >= max_fitness:
+                self._halt_workers(main_to_worker_queues)
+                break
 
             # Send new population to wokers
             self._update_workers(population, main_to_worker_queues, parents_per_worker, self.parents_count)
@@ -136,3 +135,11 @@ class Elitist:
 
             # Send them to workers
             main_to_worker_queue.put(parents)
+            
+    def _halt_workers(self, main_to_worker_queues):
+
+        for main_to_worker_queue in main_to_worker_queues:
+
+            main_to_worker_queue.put([])
+
+
