@@ -107,4 +107,6 @@ class NefCartPole:
 if __name__ == '__main__':
 
     e = Elitist(NefCartPole())
-    e.run(1)
+    best = e.run(1)
+
+    print(best)

@@ -7,6 +7,8 @@ MIT License
 '''
 
 import time
+import os
+import pickle
 import collections
 import numpy as np
 import multiprocessing as mp
@@ -24,6 +26,9 @@ class Elitist:
         self.parents_count = parents_count
 
     def run(self, ngen):
+        '''
+        Returns fittest individual.
+        '''
 
         # Use all available CPUs, distributing the population equally among them
         workers_count = mp.cpu_count()
@@ -58,10 +63,6 @@ class Elitist:
             # Get new best
             best = population[0]
 
-            # Save best if it's better than previous
-            #if save_path is not None:
-            #    best_reward = save_best(save_path, best[0], best[1], best_reward, agent)
-
             # Mutate the learnable parameters for each individual in the population
             population = [(self.problem, self.problem.mutate_params(p[0], self.noise_std)) for p in population]
 
@@ -77,6 +78,9 @@ class Elitist:
         time.sleep(0.25)
         for w in workers:
             w.join()
+
+        # Return the fittest individual
+        return best
 
     def _setup_workers(self, ngen, workers_count, parents_per_worker):
 
