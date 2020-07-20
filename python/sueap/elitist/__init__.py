@@ -21,7 +21,3 @@ class Elitist:
 
         return
 
-
-
-
-
