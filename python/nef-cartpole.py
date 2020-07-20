@@ -48,7 +48,7 @@ class NefCartPole:
 
         return d+noise_std*np.random.randn(*d.shape)
 
-    def _run_episode(self, params, env='CartPole-v1', render=False):
+    def _run_episode(self, params, env='CartPole-v0', render=False):
 
         # Build env
         env = gym.make(env)
@@ -107,4 +107,4 @@ class NefCartPole:
 if __name__ == '__main__':
 
     e = Elitist(NefCartPole())
-    e.run(10)
+    e.run(1)
