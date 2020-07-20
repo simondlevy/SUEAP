@@ -1,4 +1,12 @@
 #!/usr/bin/env python3
+'''
+Use NSGS-II to solve multiobjective fitness problem from Fonseca and Fleming (1993)
+
+Copyright (C) 2020 Simon D. Levy
+
+MIT License
+'''
+
 import numpy as np
 
 from sueap import Problem
