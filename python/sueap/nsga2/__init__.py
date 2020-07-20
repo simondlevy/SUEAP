@@ -153,25 +153,25 @@ class NSGA2:
         # Plot runs on main thread
         plotter.start() 
 
-    def run(self, G):
+    def run(self, ngen):
         '''
         Inputs:
-            G Number of generations
+            ngen Number of generations
         Returns: population after G generations
         '''
-        return self._run(G)
+        return self._run(ngen)
 
-    def _run(self, G, plotter):
+    def _run(self, ngen, plotter):
 
         P = set([_Individual(self.problem.x()) for _ in range(self.pop_size)])
         self._eval_fits(P)
         Q = set()
 
-        for g in range(G):
+        for g in range(ngen):
 
             P = _nsga_ii(P, Q, self.pop_size, self.problem.fsiz, self.problem.fmin, self.problem.fmax)
-            Q = self.problem.make_new_pop(P, g, G)     
-            plotter.update(P,g,G)
+            Q = self.problem.make_new_pop(P, g, ngen)     
+            plotter.update(P,g,ngen)
             sleep(1.0)
             self._eval_fits(Q)
             

@@ -10,15 +10,14 @@ import numpy as np
 
 class Elitist:
 
-    def __init__(self, noise_std=0.01, pop_size=2000, parents_count=10, max_gen=None, max_fitness=None):
+    def __init__(self, problem, pop_size=2000, noise_std=0.01, parents_count=10):
 
-        self.noise_std = noise_std
+        self.problem = problem
         self.pop_size = pop_size
+        self.noise_std = noise_std
         self.parents_count = parents_count
-        self.max_gen = np.iinfo(np.uint32).max if max_gen is None else max_gen
-        self.max_fitness = np.inf if max_fitness is None else max_fitness
 
-    def run(self):
+    def run(self, G):
 
         return
 
