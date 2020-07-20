@@ -24,10 +24,10 @@ class Elitist:
         workers_count = mp.cpu_count()
         parents_per_worker = self.pop_size // workers_count
 
-        '''
         # Set up communication with workers
-        main_to_worker_queues, worker_to_main_queue, workers = setup_workers(args, agent, workers_count, parents_per_worker)
+        main_to_worker_queues, worker_to_main_queue, workers = self._setup_workers(workers_count, parents_per_worker)
 
+        '''
         # This will store the fittest individual in the population and its reward
         best = None
         best_reward = None
@@ -74,4 +74,20 @@ class Elitist:
         for w in workers:
             w.join()
         '''
+
+    def _setup_workers(self, workers_count, parents_per_worker):
+
+        main_to_worker_queues = []
+        worker_to_main_queue = mp.Queue(workers_count)
+        workers = []
+        for k in range(workers_count):
+            main_to_worker_queue = mp.Queue()
+            main_to_worker_queues.append(main_to_worker_queue)
+            #w = mp.Process(target=worker_func, args=(k, cmdargs, main_to_worker_queue, worker_to_main_queue))
+            #workers.append(w)
+            #w.start()
+            #main_to_worker_queue.put([(agent, agent.new_params()) for _ in range(parents_per_worker)])
+
+        return main_to_worker_queues, worker_to_main_queue, workers
+
 
