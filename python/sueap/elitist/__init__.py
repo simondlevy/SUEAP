@@ -79,7 +79,7 @@ class Elitist:
             w.join()
 
         # Return the fittest individual
-        return best
+        return best[0]
 
     def _setup_workers(self, ngen, workers_count, parents_per_worker):
 
