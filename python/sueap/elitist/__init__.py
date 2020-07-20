@@ -6,10 +6,13 @@ Copyright (C) 2020 Simon D. Levy
 MIT License
 '''
 
-import numpy as np
+import collections
 import multiprocessing as mp
 
 class Elitist:
+
+    # Workers use named tuple to send results back to main
+    WorkerToMainItem = collections.namedtuple('WorkerToMainItem', field_names=['params', 'reward', 'steps'])
 
     def __init__(self, problem, pop_size=2000, noise_std=0.01, parents_count=10):
 
@@ -25,7 +28,7 @@ class Elitist:
         parents_per_worker = self.pop_size // workers_count
 
         # Set up communication with workers
-        main_to_worker_queues, worker_to_main_queue, workers = self._setup_workers(workers_count, parents_per_worker)
+        main_to_worker_queues, worker_to_main_queue, workers = self._setup_workers(ngen, workers_count, parents_per_worker)
 
         '''
         # This will store the fittest individual in the population and its reward
@@ -75,7 +78,7 @@ class Elitist:
             w.join()
         '''
 
-    def _setup_workers(self, workers_count, parents_per_worker):
+    def _setup_workers(self, ngen, workers_count, parents_per_worker):
 
         main_to_worker_queues = []
         worker_to_main_queue = mp.Queue(workers_count)
@@ -83,11 +86,21 @@ class Elitist:
         for k in range(workers_count):
             main_to_worker_queue = mp.Queue()
             main_to_worker_queues.append(main_to_worker_queue)
-            #w = mp.Process(target=worker_func, args=(k, cmdargs, main_to_worker_queue, worker_to_main_queue))
-            #workers.append(w)
+            w = mp.Process(target=self._worker_func, args=(self, ngen, k, main_to_worker_queue, worker_to_main_queue))
+            workers.append(w)
             #w.start()
-            #main_to_worker_queue.put([(agent, agent.new_params()) for _ in range(parents_per_worker)])
+            main_to_worker_queue.put([(self.problem, self.problem.new_params()) for _ in range(parents_per_worker)])
 
         return main_to_worker_queues, worker_to_main_queue, workers
 
+    def _worker_func(self, ngen, worker_id, main_to_worker_queue, worker_to_main_queue):
 
+        # Loop over generations, getting parent param dictionaries from main process and mutating to get new population
+        for _ in range(ngen):
+            parents = main_to_worker_queue.get()
+            if len(parents) == 0:
+                break
+            for solver in parents:
+                agent, params = solver
+                fitness, steps = self.paroblem.eval_params(params)
+                worker_to_main_queue.put(self.WorkerToMainItem(params=params, fitness=fitness, steps=steps))

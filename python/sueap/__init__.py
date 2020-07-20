@@ -86,5 +86,3 @@ class Problem(metaclass=abc.ABCMeta):
         Your subclass should override this method.
         '''
         return None
-
-
