@@ -168,9 +168,8 @@ class NSGA2:
             # Get results from workers
             P, batch_steps = self._get_new_population(worker_to_main_queue)
 
-            print(P)
-            print(batch_steps)
-            exit(0)
+            print(P[0])
+            break
 
             P = _nsga_ii(P, Q, self.pop_size, self.problem.fsiz, self.problem.fmin, self.problem.fmax)
             Q = self.problem.make_new_pop(P, gen_idx, ngen)     
