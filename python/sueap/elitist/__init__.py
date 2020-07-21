@@ -45,7 +45,7 @@ class Elitist:
             t_start = time.time()
 
             # Get results from workers
-            population, batch_steps = self._get_new_population(worker_to_main_queue)
+            population, batch_steps = self._get_fitnesses(worker_to_main_queue)
 
             print(len(population))
 
@@ -108,7 +108,7 @@ class Elitist:
                 fitness, steps = self.problem.eval_params(parent)
                 worker_to_main_queue.put(WorkerToMainItem(params=parent, fitness=fitness, steps=steps))
                 
-    def _get_new_population(self, worker_to_main_queue):
+    def _get_fitnesses(self, worker_to_main_queue):
 
         batch_steps = 0
         population = []

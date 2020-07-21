@@ -180,6 +180,12 @@ class NSGA2:
         # Set up communication with workers and send them the initial population
         main_to_worker_queues, worker_to_main_queue, workers = self._setup_workers(ngen)
 
+        # Get results from workers
+        population, batch_steps = self._get_fitnesses(worker_to_main_queue)
+
+        # Combine parameters and fitnesses to work with NSGA-II algorithm
+        P = set([_Individual(p[0], p[1]) for p in population])
+
         # Create initially empty child population
         Q = set()
 
@@ -189,16 +195,12 @@ class NSGA2:
             # Start timer for performance tracking
             #t_start = time.time()
 
-            # Get results from workers
-            population, batch_steps = self._get_new_population(worker_to_main_queue)
-
-            # Combine parameters and fitnesses to work with NSGA-II algorithm
-            P = set([_Individual(p[0], p[1]) for p in population])
-
             # Run NSGA-II
             P = _nsga_ii(P, Q, self.pop_size, self.problem.fsiz, self.problem.fmin, self.problem.fmax)
 
-            Q = self.problem.make_new_pop(P, gen_idx, ngen)     
+            print(P)
+
+            #Q = self.problem.make_new_pop(P, gen_idx, ngen)     
 
             break
 
@@ -245,7 +247,7 @@ class NSGA2:
                 fitness, steps = self.problem.eval_params(parent)
                 worker_to_main_queue.put(WorkerToMainItem(params=parent, fitness=fitness, steps=steps))
                 
-    def _get_new_population(self, worker_to_main_queue):
+    def _get_fitnesses(self, worker_to_main_queue):
 
         batch_steps = 0
         population = []

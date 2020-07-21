@@ -72,13 +72,13 @@ class Fon:
             p2 = pick(P)
             selected.add(p1 if p1 < p2 else p2)
 
-        print(selected)
-        return Q
-
         # recombination (crossover)
         for _ in range(N):
             child = pick(selected)
             Q.add(_Individual(self.crossover(child, pick(selected)) if np.random.random()<self.pc else child.x))
+
+        print(selected)
+        return Q
 
         # mutation, scaled by fraction of generations passed 
         for q in Q:
