@@ -199,7 +199,7 @@ class NSGA2:
             P = _nsga_ii(P, Q, self.pop_size, self.problem.fsiz, self.problem.fmin, self.problem.fmax)
 
             # Run crossover and mutation on genomes to get new population
-            newpop = self.problem.make_new_pop(P, gen_idx, ngen)     
+            newpop = self._make_new_pop(P, gen_idx, ngen)     
 
             print(newpop)
 
@@ -282,4 +282,38 @@ class NSGA2:
 
             main_to_worker_queue.put([])
 
+    def _make_new_pop(self, P, g, G):
+        '''
+        Standard implementation of make_new_pop:
+            - tournament selection
+            - crossover
+            - mutation
+        Inputs:
+            P     a population of individuals with the < relation defined
+            g     current generation (for scaling mutation)
+            ngen  total number of generations (for scaling mutation)
+        Returns: params for a new population
+        '''
+     
+        Qparams = [None]*self.pop_size
 
+        # tournament selection
+        selected = set()
+        for _ in range(self.pop_size):
+            p1 = self._pick(P)
+            p2 = self._pick(P)
+            selected.add(p1 if p1 < p2 else p2)
+
+        # recombination (crossover) and mutation
+        for k in range(self.pop_size):
+            child = self._pick(selected)
+            Qparams[k] = self.problem.crossover(child, self._pick(selected)) if np.random.random()<self.problem.pc else child.x
+            Qparams[k] = self.problem.mutate(Qparams[k], g, G)
+
+        return Qparams
+    
+    def _pick(self, P):
+        '''
+        Returns a randomly-chosen individual from set P
+        '''
+        return np.random.choice(tuple(P))

@@ -9,7 +9,6 @@ MIT License
 
 import numpy as np
 
-from sueap import Problem, pick
 from sueap.tmp import NSGA2
 
 class Fon:
@@ -47,38 +46,6 @@ class Fon:
 
         k = np.random.randint(3-1) + 1
         return np.append(p.x[:k], q.x[k:])
-
-    def make_new_pop(self, P, g, G):
-        '''
-        Standard implementation of make_new_pop:
-            - tournament selection
-            - crossover
-            - mutation
-        Inputs:
-            P     a population of individuals with the < relation defined
-            g     current generation (for scaling mutation)
-            ngen  total number of generations (for scaling mutation)
-        Returns: params for a new population
-        '''
-     
-        # goal is N children
-        N = len(P)
-        Qparams = [None]*N
-
-        # tournament selection
-        selected = set()
-        for _ in range(N):
-            p1 = pick(P)
-            p2 = pick(P)
-            selected.add(p1 if p1 < p2 else p2)
-
-        # recombination (crossover)
-        for k in range(N):
-            child = pick(selected)
-            Qparams[k] = self.crossover(child, pick(selected)) if np.random.random()<self.pc else child.x
-            Qparams[k] = self.mutate(Qparams[k], g, G)
-
-        return Qparams
 
 if __name__ == '__main__':
 
