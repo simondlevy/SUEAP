@@ -99,10 +99,10 @@ class Elitist:
         # Loop over generations, getting parent param dictionaries from main process and mutating to get new population
         for _ in range(ngen):
             parents = main_to_worker_queue.get()
-            if len(parents) == 0:
+            if len(parents) == 0: # main sends [] when done
                 break
-            for solver in parents:
-                _, params = solver
+            for parent in parents:
+                _, params = parent
                 fitness, steps = self.problem.eval_params(params)
                 worker_to_main_queue.put(WorkerToMainItem(params=params, fitness=fitness, steps=steps))
                 
