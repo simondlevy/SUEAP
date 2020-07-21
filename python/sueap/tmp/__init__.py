@@ -121,7 +121,8 @@ class _Plotter:
         self.g = g
 
 
-# Workers use named tuple to send results back to main --------------------------------------------
+# Named tuple used by workers to send results back to main ------------------------------------------
+
 WorkerToMainItem = collections.namedtuple('WorkerToMainItem', field_names=['params', 'fitness', 'steps'])
 
 # Exported classes ----------------------------------------------------------------------------------
@@ -142,54 +143,53 @@ class NSGA2:
         self.workers_count = mp.cpu_count()
         self.parents_per_worker = self.pop_size // self.workers_count
 
-    def _run(self, ngen):
+    def run(self, ngen):
+        '''
+        Inputs:
+            ngen Number of generations
+        Returns: population after ngen generations
+        '''
+        return self._run(ngen)
+
+    def _run(self, ngen, plotter=None):
 
         # Set up communication with workers
         main_to_worker_queues, worker_to_main_queue, workers = self._setup_workers(ngen)
 
-        # This will store the fittest individual in the population and its fitness
-        best = None
+        # Create initially empty child population
+        Q = set()
 
         # Loop for specified number of generations (default = inf)
         for gen_idx in range(ngen):
 
             # Start timer for performance tracking
-            t_start = time.time()
+            #t_start = time.time()
 
             # Get results from workers
-            population, batch_steps = self._get_new_population(worker_to_main_queue)
+            P, batch_steps = self._get_new_population(worker_to_main_queue)
 
-            # Keep the current best in the population
-            if best is not None:
-                population.append(best)
+            print(P)
+            print(batch_steps)
+            exit(0)
 
-            # Sort population by fitness
-            population.sort(key=lambda p: p[1], reverse=True)
-
-            # Report and store current state
-            self._report(population, gen_idx, batch_steps, t_start)
-
-            # Get new best
-            best = population[0]
-
-            # Mutate the learnable parameters for each individual in the population
-            population = [self.problem.mutate_params(p[0], self.noise_std) for p in population]
-
-            # Quit if maximum fitness reached
-            if max_fitness is not None and best[1] >= max_fitness:
-                self._halt_workers(main_to_worker_queues)
-                break
-
-            # Send new population to wokers
-            self._update_workers(population, main_to_worker_queues)
+            P = _nsga_ii(P, Q, self.pop_size, self.problem.fsiz, self.problem.fmin, self.problem.fmax)
+            Q = self.problem.make_new_pop(P, gen_idx, ngen)     
+            if plotter is None:
+                print('%04d/%04d' % (gen_idx+1, ngen))
+            else:
+                plotter.update(P,gen_idx,ngen)
+                time.sleep(1.0)
+ 
+            # Send new population to workers
+            self._update_workers(P, main_to_worker_queues)
 
         # Shut down workers after waiting a little for them to finish
         time.sleep(0.25)
         for w in workers:
             w.join()
 
-        # Return the fittest individual
-        return best[0]
+        # Return the first front
+        return None # XXX
 
     def _setup_workers(self, ngen):
 

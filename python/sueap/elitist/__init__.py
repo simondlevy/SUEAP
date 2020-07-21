@@ -68,7 +68,7 @@ class Elitist:
                 self._halt_workers(main_to_worker_queues)
                 break
 
-            # Send new population to wokers
+            # Send new population to workers
             self._update_workers(population, main_to_worker_queues)
 
         # Shut down workers after waiting a little for them to finish
