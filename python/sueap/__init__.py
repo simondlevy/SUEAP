@@ -9,6 +9,30 @@ MIT License
 import numpy as np
 import abc
 
+class _Individual:
+    '''
+    A class for representing an individual from a population
+    '''
+
+    def __init__(self, x):
+
+        self.x = x
+
+        self.f        = None
+        self.S        = None
+        self.rank     = None
+        self.n        = None
+        self.distance = None
+
+    def __lt__(self, other):
+
+        return np.all(self.f < other.f)
+
+    def __str__(self):
+
+        return str(self.f)
+
+
 def pick(P):
     '''
     Returns a randomly-chosen individual from set P

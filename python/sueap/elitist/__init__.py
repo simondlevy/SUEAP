@@ -32,7 +32,7 @@ class Elitist:
         Returns fittest individual.
         '''
 
-        # Set up communication with workers
+        # Set up communication with workers and send them the initial population
         main_to_worker_queues, worker_to_main_queue, workers = self._setup_workers(ngen)
 
         # This will store the fittest individual in the population and its fitness
@@ -46,6 +46,8 @@ class Elitist:
 
             # Get results from workers
             population, batch_steps = self._get_new_population(worker_to_main_queue)
+
+            print(len(population))
 
             # Keep the current best in the population
             if best is not None:
@@ -99,6 +101,7 @@ class Elitist:
         # Loop over generations, getting parent param dictionaries from main process and mutating to get new population
         for _ in range(ngen):
             parents = main_to_worker_queue.get()
+            print(worker_id, len(parents))
             if len(parents) == 0: # main sends [] when done
                 break
             for parent in parents:

@@ -52,5 +52,7 @@ class Fon(Problem):
 
 if __name__ == '__main__':
 
-    nsga2 = NSGA2(Fon(), 100)
-    nsga2.animate(30)
+    np.random.seed(0)
+
+    nsga2 = NSGA2(Fon(), 8)
+    nsga2.run(1)

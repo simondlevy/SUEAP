@@ -63,6 +63,7 @@ def _nsga_ii(P, Q, N, fsiz, fmin, fmax):
         _crowding_distance_assignment(list(F[i]), fsiz, fmin, fmax) # Calculate crowding-distance in F_i
         P = P.union(F[i])                                           # Include ith nondominated front in the parent pop
         i += 1                                                      # Check the next front for inclusion
+        print(i, len(P), len(F), N)
     F[i] = sorted(F[i], key=lambda self:self.n)                     # Sort in descending order using <_n
     P = P.union(F[i][:(N-len(P))])                                  # Choose the first (N-|P_{t+1}) elements of F_i
 
@@ -153,7 +154,7 @@ WorkerToMainItem = collections.namedtuple('WorkerToMainItem', field_names=['para
 
 class NSGA2:
 
-    def __init__(self, problem, pop_size=100):
+    def __init__(self, problem, pop_size=2000):
         '''
         Inputs:
             problem  An object subclassing nsga2.Problem
@@ -177,7 +178,7 @@ class NSGA2:
 
     def _run(self, ngen, plotter=None):
 
-        # Set up communication with workers
+        # Set up communication with workers and send them the initial population
         main_to_worker_queues, worker_to_main_queue, workers = self._setup_workers(ngen)
 
         # Create initially empty child population
@@ -193,11 +194,13 @@ class NSGA2:
             population, batch_steps = self._get_new_population(worker_to_main_queue)
 
             # Combine parameters and fitnesses to work with NSGA-II algorithm
-            P = [_Individual(p[0], p[1]) for p in population]
-            print(P[0])
-            exit(0)
+            P = set([_Individual(p[0], p[1]) for p in population])
 
+            # Run NSGA-II
             P = _nsga_ii(P, Q, self.pop_size, self.problem.fsiz, self.problem.fmin, self.problem.fmax)
+
+            break
+
             Q = self.problem.make_new_pop(P, gen_idx, ngen)     
             if plotter is None:
                 print('%04d/%04d' % (gen_idx+1, ngen))
