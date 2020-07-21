@@ -63,7 +63,6 @@ def _nsga_ii(P, Q, N, fsiz, fmin, fmax):
         _crowding_distance_assignment(list(F[i]), fsiz, fmin, fmax) # Calculate crowding-distance in F_i
         P = P.union(F[i])                                           # Include ith nondominated front in the parent pop
         i += 1                                                      # Check the next front for inclusion
-        print(i, len(P), len(F), N)
     F[i] = sorted(F[i], key=lambda self:self.n)                     # Sort in descending order using <_n
     P = P.union(F[i][:(N-len(P))])                                  # Choose the first (N-|P_{t+1}) elements of F_i
 
@@ -199,9 +198,10 @@ class NSGA2:
             # Run NSGA-II
             P = _nsga_ii(P, Q, self.pop_size, self.problem.fsiz, self.problem.fmin, self.problem.fmax)
 
+            Q = self.problem.make_new_pop(P, gen_idx, ngen)     
+
             break
 
-            Q = self.problem.make_new_pop(P, gen_idx, ngen)     
             if plotter is None:
                 print('%04d/%04d' % (gen_idx+1, ngen))
             else:
