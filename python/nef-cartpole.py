@@ -112,5 +112,5 @@ if __name__ == '__main__':
 
     best = e.run(10, max_fitness=2000)
 
-    p.run_episode(best, render=True)
+    print('Got reward %.3f in %d steps' % p.run_episode(best, render=True))
 
