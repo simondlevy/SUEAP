@@ -72,7 +72,7 @@ def _nsga_ii(P, Q, N, fsiz, fmin, fmax):
 
 class _Individual:
     '''
-    A class for representing an individual from a population
+    A class to support sorting of individuals in a population
     '''
 
     def __init__(self, x, f):
@@ -195,10 +195,13 @@ class NSGA2:
             # Start timer for performance tracking
             #t_start = time.time()
 
-            # Run NSGA-II
+            # Run NSGA-II to get sorted population
             P = _nsga_ii(P, Q, self.pop_size, self.problem.fsiz, self.problem.fmin, self.problem.fmax)
 
-            print(P)
+            # Extract genomes from sorted population
+            population = [p.x for p in P]
+
+            print(population)
 
             #Q = self.problem.make_new_pop(P, gen_idx, ngen)     
 
