@@ -134,10 +134,10 @@ class NSGA2:
         self.problem = problem
         self.pop_size = pop_size
 
-    def animate(self, G, axes=(0,1), imagename=None):
+    def animate(self, ngen, axes=(0,1), imagename=None):
         '''
         Inputs:
-            G          Number of generations
+            ngen       Number of generations
             axes       Axis indices for 2D plot
             imagename  Prefix for image file names
         '''
@@ -146,7 +146,7 @@ class NSGA2:
 
         plotter = _Plotter(self.problem.fmin, self.problem.fmax, axes, imagename)
 
-        thread = Thread(target=self._run, args=(G, plotter))
+        thread = Thread(target=self._run, args=(ngen, plotter))
         thread.daemon = True
         thread.start()
 
@@ -157,7 +157,7 @@ class NSGA2:
         '''
         Inputs:
             ngen Number of generations
-        Returns: population after G generations
+        Returns: population after ngen generations
         '''
         return self._run(ngen)
 
