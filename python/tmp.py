@@ -61,10 +61,9 @@ class Fon:
         Returns: params for a new population
         '''
      
-        Qparams = []
-
         # goal is N children
         N = len(P)
+        Qparams = [None]*N
 
         # tournament selection
         selected = set()
@@ -74,17 +73,15 @@ class Fon:
             selected.add(p1 if p1 < p2 else p2)
 
         # recombination (crossover)
-        for _ in range(N):
+        for k in range(N):
             child = pick(selected)
-            Qparams.append(self.crossover(child, pick(selected)) if np.random.random()<self.pc else child.x)
-
-        return Qparams
+            Qparams[k] = self.crossover(child, pick(selected)) if np.random.random()<self.pc else child.x
 
         # mutation, scaled by fraction of generations passed 
-        for q in Q:
-            self.mutate(q, g, G)
+        #for q in Q:
+        #    self.mutate(q, g, G)
 
-        return Q
+        return Qparams
 
 if __name__ == '__main__':
 
