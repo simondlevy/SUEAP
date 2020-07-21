@@ -198,12 +198,10 @@ class NSGA2:
             # Run NSGA-II to get sorted population
             P = _nsga_ii(P, Q, self.pop_size, self.problem.fsiz, self.problem.fmin, self.problem.fmax)
 
-            # Extract genomes from sorted population
-            population = [p.x for p in P]
+            # Run crossover and mutation on genomes to get new population
+            newpop = self.problem.make_new_pop(P, gen_idx, ngen)     
 
-            print(population)
-
-            #Q = self.problem.make_new_pop(P, gen_idx, ngen)     
+            print(newpop)
 
             break
 

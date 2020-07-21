@@ -55,12 +55,13 @@ class Fon:
             - crossover
             - mutation
         Inputs:
-            P   a population
+            P   a population of individuals with the < relation defined
             g   current generation (for scaling mutation)
             G   total number of generations (for scaling mutation)
+        Returns: params for a new population
         '''
      
-        Q = set()
+        Qparams = []
 
         # goal is N children
         N = len(P)
@@ -75,10 +76,9 @@ class Fon:
         # recombination (crossover)
         for _ in range(N):
             child = pick(selected)
-            Q.add(_Individual(self.crossover(child, pick(selected)) if np.random.random()<self.pc else child.x))
+            Qparams.append(self.crossover(child, pick(selected)) if np.random.random()<self.pc else child.x)
 
-        print(selected)
-        return Q
+        return Qparams
 
         # mutation, scaled by fraction of generations passed 
         for q in Q:
