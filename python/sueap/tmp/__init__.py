@@ -70,6 +70,30 @@ def _nsga_ii(P, Q, N, fsiz, fmin, fmax):
 
 # Internal classes ----------------------------------------------------------------------------------
 
+class _Individual:
+    '''
+    A class for representing an individual from a population
+    '''
+
+    def __init__(self, x, f):
+
+        self.x = x
+        self.f = f
+
+        self.S        = None
+        self.rank     = None
+        self.n        = None
+        self.distance = None
+
+    def __lt__(self, other):
+
+        return np.all(self.f < other.f)
+
+    def __str__(self):
+
+        return str((self.x, self.f))
+
+
 class _Plotter:
     '''
     A class for animated 2D fitness plots
@@ -166,10 +190,12 @@ class NSGA2:
             #t_start = time.time()
 
             # Get results from workers
-            P, batch_steps = self._get_new_population(worker_to_main_queue)
+            population, batch_steps = self._get_new_population(worker_to_main_queue)
 
+            # Combine parameters and fitnesses to work with NSGA-II algorithm
+            P = [_Individual(p[0], p[1]) for p in population]
             print(P[0])
-            break
+            exit(0)
 
             P = _nsga_ii(P, Q, self.pop_size, self.problem.fsiz, self.problem.fmin, self.problem.fmax)
             Q = self.problem.make_new_pop(P, gen_idx, ngen)     
