@@ -90,7 +90,7 @@ class Elitist:
             w = mp.Process(target=self._worker_func, args=(ngen, k, main_to_worker_queue, worker_to_main_queue))
             workers.append(w)
             w.start()
-            main_to_worker_queue.put([(self.problem, self.problem.new_params()) for _ in range(self.parents_per_worker)])
+            main_to_worker_queue.put([(None, self.problem.new_params()) for _ in range(self.parents_per_worker)])
 
         return main_to_worker_queues, worker_to_main_queue, workers
 
