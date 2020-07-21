@@ -163,7 +163,7 @@ class NSGA2:
 
     def _run(self, ngen, plotter):
 
-        P = set([_Individual(self.problem.x()) for _ in range(self.pop_size)])
+        P = set([_Individual(self.problem.new_params()) for _ in range(self.pop_size)])
         self._eval_fits(P)
         Q = set()
 

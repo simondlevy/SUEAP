@@ -17,7 +17,7 @@ class Fon(Problem):
     PM   = .01
     PC   = .7
 
-    def x(self):
+    def new_params(self):
         return 8 * np.random.random(3) - 4
 
     @staticmethod
