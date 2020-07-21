@@ -61,7 +61,7 @@ class Elitist:
             best = population[0]
 
             # Mutate the learnable parameters for each individual in the population
-            population = [(self.problem, self.problem.mutate_params(p[0], self.noise_std)) for p in population]
+            population = [self.problem.mutate_params(p[0], self.noise_std) for p in population]
 
             # Quit if maximum fitness reached
             if max_fitness is not None and best[1] >= max_fitness:
@@ -90,7 +90,7 @@ class Elitist:
             w = mp.Process(target=self._worker_func, args=(ngen, k, main_to_worker_queue, worker_to_main_queue))
             workers.append(w)
             w.start()
-            main_to_worker_queue.put([(None, self.problem.new_params()) for _ in range(self.parents_per_worker)])
+            main_to_worker_queue.put([self.problem.new_params() for _ in range(self.parents_per_worker)])
 
         return main_to_worker_queues, worker_to_main_queue, workers
 
@@ -102,9 +102,8 @@ class Elitist:
             if len(parents) == 0: # main sends [] when done
                 break
             for parent in parents:
-                _, params = parent
-                fitness, steps = self.problem.eval_params(params)
-                worker_to_main_queue.put(WorkerToMainItem(params=params, fitness=fitness, steps=steps))
+                fitness, steps = self.problem.eval_params(parent)
+                worker_to_main_queue.put(WorkerToMainItem(params=parent, fitness=fitness, steps=steps))
                 
     def _get_new_population(self, worker_to_main_queue):
 
