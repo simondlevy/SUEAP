@@ -161,7 +161,7 @@ class NSGA2:
         '''
         return self._run(ngen)
 
-    def _run(self, ngen, plotter):
+    def _run(self, ngen, plotter=None):
 
         P = set([_Individual(self.problem.new_params()) for _ in range(self.pop_size)])
         self._eval_fits(P)
@@ -171,8 +171,11 @@ class NSGA2:
 
             P = _nsga_ii(P, Q, self.pop_size, self.problem.fsiz, self.problem.fmin, self.problem.fmax)
             Q = self.problem.make_new_pop(P, g, ngen)     
-            plotter.update(P,g,ngen)
-            sleep(1.0)
+            if plotter is None:
+                print('%04d/%04d' % (g+1, ngen))
+            else:
+                plotter.update(P,g,ngen)
+                sleep(1.0)
             self._eval_fits(Q)
             
     def _eval_fits(self, P):

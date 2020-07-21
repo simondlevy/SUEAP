@@ -11,8 +11,120 @@ import collections
 import numpy as np
 import multiprocessing as mp
 
-# Workers use named tuple to send results back to main
+# Algorithms ---------------------------------------------------------------------------------------
+
+def _fast_non_dominated_sort(P):
+
+    F = [set()] # Fronts
+
+    for p in P:
+        p.S = set()
+        p.n = 0
+        for q in P:
+            if p < q:                # If p dominates q
+                p.S.add(q)           # Add q to the set of solutions dominated by p
+            elif q < p:
+                p.n += 1             # Increment the domination counter of p
+        if p.n == 0:                 # p belongs to the first front
+            p.rank = 1
+            F[0].add(p)
+    i = 0                            # Initialize the front counter
+    while len(F[i]) > 0:
+        Q = set()                    # Used to store the members of the next front
+        for p in F[i]:
+            for q in p.S:
+                q.n -= 1
+                if q.n == 0:         # q belongs to the next front
+                    q.rank = i+1
+                    Q.add(q)
+        i += 1
+        F.append(Q)
+
+    return F[:-1]
+
+def _crowding_distance_assignment(I, fsiz, fmin, fmax):
+
+    for p in I:                                  # initialize distance
+        p.distance = 0
+
+    for m in range(fsiz):                        # for each objective m
+        I = sorted(I, key=lambda self:self.f[m]) # sort using each objective value
+        I[0].distance = I[-1].distance = np.inf  # so that boundary points always selected
+        for i in range(1,len(I)-1):              # for all other points
+            I[i].distance += (I[i+1].f[m] - I[i-1].f[m]) /(fmax[m] - fmin[m])
+
+def _nsga_ii(P, Q, N, fsiz, fmin, fmax):
+
+    # Core algorithm from Deb et al. (2002)
+    R = list(P.union(Q))                                            # Combine parent and offspring population
+    F = _fast_non_dominated_sort(R)                                 # F = (F_1, F_2, ...), all nondominated fronts of R_t
+    P, i = set(), 0
+    while (len(P) + len(F[i])) < N:                                 # Until the parent population is filled
+        _crowding_distance_assignment(list(F[i]), fsiz, fmin, fmax) # Calculate crowding-distance in F_i
+        P = P.union(F[i])                                           # Include ith nondominated front in the parent pop
+        i += 1                                                      # Check the next front for inclusion
+    F[i] = sorted(F[i], key=lambda self:self.n)                     # Sort in descending order using <_n
+    P = P.union(F[i][:(N-len(P))])                                  # Choose the first (N-|P_{t+1}) elements of F_i
+
+    return P
+
+# Internal classes ----------------------------------------------------------------------------------
+
+class _Plotter:
+    '''
+    A class for animated 2D fitness plots
+    '''
+
+    def __init__(self, fmin, fmax, axes, imagename):
+
+        import matplotlib.pyplot as plt
+
+        self.fig, self.ax = plt.subplots()
+        self.ln, = plt.plot([], [], 'r.')
+        self.ax.set_xlim((fmin[0], fmax[0]))
+        self.ax.set_ylim((fmin[1], fmax[1]))
+        self.ax.set_xlabel('$f_%d$' % axes[0])
+        self.ax.set_ylabel('$f_%d$' % axes[1])
+        self.ax.set_aspect('equal')
+
+        self.imagename = imagename
+        self.g = None
+        self.gprev = None
+        self.plt = plt
+        self.axes = axes
+        self.ani = None
+        self.done = False
+
+    def start(self):
+
+        from matplotlib.animation import FuncAnimation
+
+        self.ani = FuncAnimation(self.fig, self._animate, blit=False)
+        self.plt.show()
+
+    def _animate(self, _):
+
+        if self.imagename is not None:
+            if self.g is not None:
+                if self.g != self.gprev:
+                    self.plt.savefig('%s_%04d.png' % (self.imagename, self.g))
+                    self.gprev = self.g
+
+        if not self.done:
+            return self.ln,
+
+    def update(self, P, g, G):
+
+        P = list(P)
+        self.ln.set_data([p.f[self.axes[0]] for p in P], [p.f[self.axes[1]] for p in P])
+        self.ax.set_title('%d/%d' % (g+1,G))
+        self.g = g
+
+
+# Workers use named tuple to send results back to main --------------------------------------------
 WorkerToMainItem = collections.namedtuple('WorkerToMainItem', field_names=['params', 'fitness', 'steps'])
+
+# Exported classes ----------------------------------------------------------------------------------
 
 class NSGA2:
 
@@ -30,10 +142,7 @@ class NSGA2:
         self.workers_count = mp.cpu_count()
         self.parents_per_worker = self.pop_size // self.workers_count
 
-    def run(self, ngen):
-        '''
-        Returns fittest individual.
-        '''
+    def _run(self, ngen):
 
         # Set up communication with workers
         main_to_worker_queues, worker_to_main_queue, workers = self._setup_workers(ngen)
