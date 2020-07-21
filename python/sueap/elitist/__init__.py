@@ -87,14 +87,15 @@ class Elitist:
         for k in range(self.workers_count):
             main_to_worker_queue = mp.Queue()
             main_to_worker_queues.append(main_to_worker_queue)
-            w = mp.Process(target=self._worker_func, args=(ngen, k, main_to_worker_queue, worker_to_main_queue))
+            w = mp.Process(target=self._worker_func, 
+                    args=(ngen, self.problem, k, main_to_worker_queue, worker_to_main_queue))
             workers.append(w)
             w.start()
             main_to_worker_queue.put([(self.problem, self.problem.new_params()) for _ in range(self.parents_per_worker)])
 
         return main_to_worker_queues, worker_to_main_queue, workers
 
-    def _worker_func(self, ngen, worker_id, main_to_worker_queue, worker_to_main_queue):
+    def _worker_func(self, ngen, problem, worker_id, main_to_worker_queue, worker_to_main_queue):
 
         # Loop over generations, getting parent param dictionaries from main process and mutating to get new population
         for _ in range(ngen):

@@ -69,12 +69,11 @@ class NefCartPole:
             obs, reward, done, _ = env.step(action)
 
             episode_reward += reward
+            episode_steps += 1
 
             # Episode end
             if done:
                 break
-
-            episode_steps += 1
 
         # Cleanup
         env.close()
