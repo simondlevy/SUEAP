@@ -102,7 +102,7 @@ class Elitist:
             if len(parents) == 0:
                 break
             for solver in parents:
-                agent, params = solver
+                _, params = solver
                 fitness, steps = self.problem.eval_params(params)
                 worker_to_main_queue.put(WorkerToMainItem(params=params, fitness=fitness, steps=steps))
                 
