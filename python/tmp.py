@@ -20,8 +20,8 @@ class Fon:
     def new_params(self):
         return 8 * np.random.random(3) - 4
 
-    def eval_params(self, params):
-        return np.array((1 - np.exp(-np.sum((params-1/np.sqrt(3))**2)), (1 - np.exp(-np.sum((params+1/np.sqrt(3))**2))))), 1
+    def eval_params(self, x):
+        return np.array((1 - np.exp(-np.sum((x-1/np.sqrt(3))**2)), (1 - np.exp(-np.sum((x+1/np.sqrt(3))**2))))), 1
 
     def mutate(p, g, G):
         p.x += np.random.randn(3) * Fon.PM * (G-g)/G
