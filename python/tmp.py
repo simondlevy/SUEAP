@@ -23,8 +23,8 @@ class Fon:
     def eval_params(self, x):
         return np.array((1 - np.exp(-np.sum((x-1/np.sqrt(3))**2)), (1 - np.exp(-np.sum((x+1/np.sqrt(3))**2))))), 1
 
-    def mutate(p, g, G):
-        p.x += np.random.randn(3) * Fon.PM * (G-g)/G
+    def mutate(self, x, g, G):
+        return x + np.random.randn(3) * Fon.PM * (G-g)/G
 
     @property
     def fmin(self):
@@ -55,9 +55,9 @@ class Fon:
             - crossover
             - mutation
         Inputs:
-            P   a population of individuals with the < relation defined
-            g   current generation (for scaling mutation)
-            G   total number of generations (for scaling mutation)
+            P     a population of individuals with the < relation defined
+            g     current generation (for scaling mutation)
+            ngen  total number of generations (for scaling mutation)
         Returns: params for a new population
         '''
      
@@ -76,10 +76,7 @@ class Fon:
         for k in range(N):
             child = pick(selected)
             Qparams[k] = self.crossover(child, pick(selected)) if np.random.random()<self.pc else child.x
-
-        # mutation, scaled by fraction of generations passed 
-        #for q in Q:
-        #    self.mutate(q, g, G)
+            Qparams[k] = self.mutate(Qparams[k], g, G)
 
         return Qparams
 
