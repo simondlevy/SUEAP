@@ -1,16 +1,18 @@
 <img src="movie.gif" width=500>
 
-This repository contains a Matlab class library and example code for a few kinds of evolutionary (genetic) 
+This repository contains Matlab and Python class libraries and example code for a few kinds of evolutionary (genetic) 
 algorithm:
 
-1. The [Standard Genetic Algorithm](https://mitpress.mit.edu/books/introduction-genetic-algorithms)
+1. The [Standard Genetic Algorithm](https://mitpress.mit.edu/books/introduction-genetic-algorithms) (Matlab)
 
-2. The [NSGA-II](http://www.iitk.ac.in/kangal/Deb_NSGA-II.pdf) algorithm for multi-objective optimization
+2. The [NSGA-II](http://www.iitk.ac.in/kangal/Deb_NSGA-II.pdf) algorithm for multi-objective optimization (Matlab, Python)
 
-3. [Random-Mutation Hill-Climbing](http://www.cleveralgorithms.com/nature-inspired/stochastic/hill_climbing_search.html), to use as a baseline for comparison
+3. [Random-Mutation Hill-Climbing](http://www.cleveralgorithms.com/nature-inspired/stochastic/hill_climbing_search.html), to use as a baseline for comparison (Matlab)
 
 4. A &ldquo;homebrew&rdquo; Multi-Objective Optimization algorithm that I developed before learning about
-NSGA-II
+NSGA-II (Matlab)
+
+5. An elitist GA that keeps the best individual in the population and uses only mutation (Python)
 
 The library supports parallel fitness evaluation (on multi-core or cluster machines).
 
