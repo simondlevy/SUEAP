@@ -47,8 +47,6 @@ class Elitist:
             # Get results from workers
             population, batch_steps = self._get_fitnesses(worker_to_main_queue)
 
-            print(len(population))
-
             # Keep the current best in the population
             if best is not None:
                 population.append(best)
@@ -101,7 +99,6 @@ class Elitist:
         # Loop over generations, getting parent param dictionaries from main process and mutating to get new population
         for _ in range(ngen):
             parents = main_to_worker_queue.get()
-            print(worker_id, len(parents))
             if len(parents) == 0: # main sends [] when done
                 break
             for parent in parents:
