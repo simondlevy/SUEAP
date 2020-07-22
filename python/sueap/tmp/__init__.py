@@ -6,10 +6,9 @@ Copyright (C) 2020 Simon D. Levy
 MIT License
 '''
 
-import collections
 import numpy as np
-import multiprocessing as mp
 from time import sleep
+from sueap import GA
 
 # Algorithms ---------------------------------------------------------------------------------------
 
@@ -146,7 +145,7 @@ class _Plotter:
 
 # Exported classes ----------------------------------------------------------------------------------
 
-class NSGA2:
+class NSGA2(GA):
 
     def __init__(self, problem, pop_size=100):
         '''
@@ -154,12 +153,7 @@ class NSGA2:
             problem  An object subclassing nsga2.Problem
             pop_size Population size
         '''
-        self.problem = problem
-        self.pop_size = pop_size
-
-        # Use all available CPUs, distributing the population equally among them
-        self.workers_count = mp.cpu_count()
-        self.parents_per_worker = self.pop_size // self.workers_count
+        GA.__init__(self, problem, pop_size)
 
     def animate(self, ngen, axes=(0,1), imagename=None):
         '''
@@ -213,6 +207,7 @@ class NSGA2:
 
         ps = list(P)
         xs = [p.x for p in P]
+
         fs = [self.problem.eval_params(x) for x in xs]
 
         for p,f in zip(ps,fs):
