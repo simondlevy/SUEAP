@@ -10,25 +10,13 @@ import time
 import collections
 import numpy as np
 import multiprocessing as mp
+from sueap import GA
 
-# Workers use named tuple to send results back to main
-WorkerToMainItem = collections.namedtuple('WorkerToMainItem', field_names=['params', 'fitness', 'steps'])
-
-class Elitist:
+class Elitist(GA):
 
     def __init__(self, problem, pop_size=2000, noise_std=0.01, parents_count=10):
 
-        self.problem = problem
-        self.pop_size = pop_size
-
-        # Use all available CPUs, distributing the population equally among them
-        self.workers_count = mp.cpu_count()
-        self.evals_per_worker = self.pop_size // self.workers_count
-
-        # Workers will be set up at start of run
-        self.main_to_worker_queues = None
-        self.worker_to_main_queue = None
-        self.workers = None
+        GA.__init__(self, problem, pop_size)
 
         self.noise_std = noise_std
         self.parents_count = parents_count
@@ -39,10 +27,10 @@ class Elitist:
         '''
 
         # Set up communication with workers
-        self._setup_workers(ngen)
+        GA.setup_workers(self, ngen)
 
         # Send initial population parameters
-        self._send_params([self.problem.new_params() for _ in range(self.pop_size)])
+        GA.send_params(self, [self.problem.new_params() for _ in range(self.pop_size)])
 
         # This will store the fittest individual in the population and its fitness
         best = None
@@ -54,7 +42,7 @@ class Elitist:
             t_start = time.time()
 
             # Get results from workers
-            population, batch_steps = self._get_fitnesses()
+            population, batch_steps = GA.get_fitnesses(self)
 
             # Keep the current best in the population
             if best is not None:
@@ -78,10 +66,10 @@ class Elitist:
                 break
 
             # Send new population to workers
-            self._send_params([population[np.random.randint(self.parents_count)] for _ in range(self.pop_size)])
+            GA.send_params(self, [population[np.random.randint(self.parents_count)] for _ in range(self.pop_size)])
 
         # Shut down workers after waiting a little for them to finish
-        self._shutdown_workers()
+        GA.shutdown_workers(self)
 
         # Return the fittest individual
         return best[0]
@@ -92,56 +80,3 @@ class Elitist:
         speed = batch_steps / (time.time() - t_start)
         print('%04d: mean fitness=%+6.2f\tmax fitness=%+6.2f\tstd fitness=%6.2f\tspeed=%d f/s' % (
             gen_idx, np.mean(fits), np.max(fits), np.std(fits), int(speed)))
-
-    def _setup_workers(self, ngen):
-
-        self.main_to_worker_queues = []
-        self.worker_to_main_queue = mp.Queue(self.workers_count)
-        self.workers = []
-        for k in range(self.workers_count):
-            main_to_worker_queue = mp.Queue()
-            self.main_to_worker_queues.append(main_to_worker_queue)
-            w = mp.Process(target=self._worker_func, args=(ngen, k, main_to_worker_queue))
-            self.workers.append(w)
-            w.start()
-
-    def _send_params(self, params):
-
-        for k,queue in enumerate(self.main_to_worker_queues):
-
-            queue.put(params[k*self.evals_per_worker:(k+1)*self.evals_per_worker])
-
-    def _worker_func(self, ngen, worker_id, main_to_worker_queue):
-
-        # Loop over generations, getting params, evaluating their fitnesses, and sending them back to main
-        for _ in range(ngen):
-            allparams = main_to_worker_queue.get()
-            if len(allparams) == 0: # main sends [] when done
-                break
-            for params in allparams:
-                fitness, steps = self.problem.eval_params(params)
-                self.worker_to_main_queue.put(WorkerToMainItem(params=params, fitness=fitness, steps=steps))
-                
-    def _get_fitnesses(self):
-
-        batch_steps = 0
-        population = []
-        pop_size = self.evals_per_worker * self.workers_count
-        while len(population) < pop_size:
-            out_item = self.worker_to_main_queue.get()
-            population.append((out_item.params, out_item.fitness))
-            batch_steps += out_item.steps
-        return population, batch_steps
-    
-    def _halt_workers(self):
-
-        for queue in self.main_to_worker_queues:
-
-            queue.put([])
-
-    def _shutdown_workers(self):
-        time.sleep(0.25)
-        for w in self.workers:
-            w.join()
-
-
