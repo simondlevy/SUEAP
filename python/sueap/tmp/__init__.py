@@ -211,12 +211,8 @@ class NSGA2:
 
     def _eval_fits(self, P):
 
-        P = list(P)
-
-        with mp.Pool(processes=mp.cpu_count()) as pool:
-
-            for p,f in zip(P, pool.map(self.problem.eval, P)):
-                p.f = f
+        for p in P:
+            p.f = self.problem.eval(p)
 
     def make_new_pop(self, P, g, G):
         '''
