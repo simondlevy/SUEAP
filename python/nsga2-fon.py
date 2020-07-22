@@ -19,6 +19,9 @@ class Fon:
     def new_params(self):
         return 8 * np.random.random(3) - 4
 
+    def eval_params(x):
+        return np.array((1 - np.exp(-np.sum((x-1/np.sqrt(3))**2)), (1 - np.exp(-np.sum((x+1/np.sqrt(3))**2)))))
+
     @staticmethod
     def eval(p):
         return np.array((1 - np.exp(-np.sum((p.x-1/np.sqrt(3))**2)), (1 - np.exp(-np.sum((p.x+1/np.sqrt(3))**2)))))
@@ -54,4 +57,4 @@ if __name__ == '__main__':
     np.random.seed(0)
 
     nsga2 = NSGA2(Fon(), 100)
-    nsga2.animate(30)
+    nsga2.animate(5)

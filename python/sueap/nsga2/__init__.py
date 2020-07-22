@@ -193,12 +193,15 @@ class NSGA2:
 
     def _run(self, ngen, plotter=None):
 
-        P = set([_Individual(self.problem.new_params()) for _ in range(self.pop_size)])
-        self._eval_fits(P)
-        Q = set()
-
         # Set up communication with workers and send them the initial population
         main_to_worker_queues, worker_to_main_queue, workers = self._setup_workers(ngen)
+
+        pop = [self.problem.new_params() for _ in range(self.pop_size)]
+
+        P = set([_Individual(p) for p in pop])
+        self._eval_fits(P)
+
+        Q = set()
 
         for g in range(ngen):
 
