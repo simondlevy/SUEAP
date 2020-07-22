@@ -6,6 +6,7 @@ Copyright (C) 2020 Simon D. Levy
 MIT License
 '''
 
+import collections
 import numpy as np
 import multiprocessing as mp
 from time import sleep
@@ -68,6 +69,9 @@ def _nsga_ii(P, Q, N, fsiz, fmin, fmax):
     return P
 
 # Internal classes ----------------------------------------------------------------------------------
+
+# Workers use named tuple to send results back to main
+WorkerToMainItem = collections.namedtuple('WorkerToMainItem', field_names=['params', 'fitness', 'steps'])
 
 class _Individual:
     '''
@@ -155,6 +159,10 @@ class NSGA2:
         '''
         self.problem = problem
         self.pop_size = pop_size
+
+        # Use all available CPUs, distributing the population equally among them
+        self.workers_count = mp.cpu_count()
+        self.parents_per_worker = self.pop_size // self.workers_count
 
     def animate(self, ngen, axes=(0,1), imagename=None):
         '''
