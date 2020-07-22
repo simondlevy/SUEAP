@@ -201,6 +201,9 @@ class NSGA2:
             # Run crossover and mutation on genomes to get new population
             newpop = self._make_new_pop(P, gen_idx, ngen)     
 
+            print(newpop)
+            break
+
             if plotter is None:
                 print('%04d/%04d' % (gen_idx+1, ngen))
             else:
@@ -208,7 +211,7 @@ class NSGA2:
                 time.sleep(1.0)
  
             # Send new population to workers
-            self.update_workers(newpop, main_to_worker_queues)
+            self._update_workers(newpop, main_to_worker_queues)
 
             break
 
@@ -257,13 +260,6 @@ class NSGA2:
             batch_steps += out_item.steps
         return population, batch_steps
     
-    def _report(self, population, gen_idx, batch_steps, t_start):
-
-        fits = [p[1] for p in population[:self.parents_count]]
-        speed = batch_steps / (time.time() - t_start)
-        print('%04d: mean fitness=%+6.2f\tmax fitness=%+6.2f\tstd fitness=%6.2f\tspeed=%d f/s' % (
-            gen_idx, np.mean(fits), np.max(fits), np.std(fits), int(speed)))
-
     def _update_workers(self, population, main_to_worker_queues):
 
         for main_to_worker_queue in main_to_worker_queues:
@@ -273,7 +269,8 @@ class NSGA2:
 
             # Send them to workers
             main_to_worker_queue.put(parents)
-     def _halt_workers(self, main_to_worker_queues):
+
+    def _halt_workers(self, main_to_worker_queues):
 
         for main_to_worker_queue in main_to_worker_queues:
 
