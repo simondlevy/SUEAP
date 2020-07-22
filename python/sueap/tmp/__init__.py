@@ -132,6 +132,9 @@ class _Plotter:
                     self.plt.savefig('%s_%04d.png' % (self.imagename, self.g))
                     self.gprev = self.g
 
+        self.fig.canvas.draw()
+        self.fig.canvas.flush_events()
+
         if not self.done:
             return self.ln,
 
@@ -184,6 +187,9 @@ class NSGA2(GA):
 
     def _run(self, ngen, plotter=None):
 
+        # Set up communication with workers
+        GA.setup_workers(self, ngen)
+
         P = set([_Individual(self.problem.new_params()) for _ in range(self.pop_size)])
         self._eval_fits(P)
 
@@ -199,9 +205,13 @@ class NSGA2(GA):
                 print('%04d/%04d' % (g+1, ngen))
             else:
                 plotter.update(P,g,ngen)
-                sleep(.1)
+                sleep(0.1)
 
             self._eval_fits(Q)
+
+        # Shut down workers after waiting a little for them to finish
+        GA.halt_workers(self)
+        GA.shutdown_workers(self)
 
     def _eval_fits(self, P):
 
