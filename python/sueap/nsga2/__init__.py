@@ -197,6 +197,9 @@ class NSGA2:
         self._eval_fits(P)
         Q = set()
 
+        # Set up communication with workers and send them the initial population
+        main_to_worker_queues, worker_to_main_queue, workers = self._setup_workers(ngen)
+
         for g in range(ngen):
 
             P = _nsga_ii(P, Q, self.pop_size, self.problem.fsiz, self.problem.fmin, self.problem.fmax)
@@ -211,6 +214,8 @@ class NSGA2:
 
             self._eval_fits(Q)
             
+        self._halt_workers(main_to_worker_queues)
+
     def _eval_fits(self, P):
 
         P = list(P)
@@ -219,6 +224,37 @@ class NSGA2:
 
             for p,f in zip(P, pool.map(self.problem.eval, P)):
                 p.f = f
+
+    def _setup_workers(self, ngen):
+
+        main_to_worker_queues = []
+        worker_to_main_queue = mp.Queue(self.workers_count)
+        workers = []
+        for k in range(self.workers_count):
+            main_to_worker_queue = mp.Queue()
+            main_to_worker_queues.append(main_to_worker_queue)
+            w = mp.Process(target=self._worker_func, args=(ngen, k, main_to_worker_queue, worker_to_main_queue))
+            workers.append(w)
+            w.start()
+
+        return main_to_worker_queues, worker_to_main_queue, workers
+
+    def _worker_func(self, ngen, worker_id, main_to_worker_queue, worker_to_main_queue):
+
+        # Loop over generations, getting parent param dictionaries from main process and mutating to get new population
+        for _ in range(ngen):
+            parents = main_to_worker_queue.get()
+            if len(parents) == 0: # main sends [] when done
+                break
+            for parent in parents:
+                fitness, steps = self.problem.eval_params(parent)
+                worker_to_main_queue.put(WorkerToMainItem(params=parent, fitness=fitness, steps=steps))
+ 
+    def _halt_workers(self, main_to_worker_queues):
+
+        for main_to_worker_queue in main_to_worker_queues:
+
+            main_to_worker_queue.put([])
 
     def make_new_pop(self, P, g, G):
         '''
