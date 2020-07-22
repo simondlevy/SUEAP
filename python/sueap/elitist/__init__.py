@@ -20,12 +20,13 @@ class Elitist:
 
         self.problem = problem
         self.pop_size = pop_size
-        self.noise_std = noise_std
-        self.parents_count = parents_count
 
         # Use all available CPUs, distributing the population equally among them
         self.workers_count = mp.cpu_count()
-        self.parents_per_worker = self.pop_size // self.workers_count
+        self.evals_per_worker = self.pop_size // self.workers_count
+
+        self.noise_std = noise_std
+        self.parents_count = parents_count
 
     def run(self, ngen, max_fitness=None):
         '''
@@ -100,24 +101,24 @@ class Elitist:
 
         for k,queue in enumerate(main_to_worker_queues):
 
-            queue.put(params[k*self.parents_per_worker:(k+1)*self.parents_per_worker])
+            queue.put(params[k*self.evals_per_worker:(k+1)*self.evals_per_worker])
 
     def _worker_func(self, ngen, worker_id, main_to_worker_queue, worker_to_main_queue):
 
-        # Loop over generations, getting parent param dictionaries from main process and mutating to get new population
+        # Loop over generations, getting params, evaluating their fitnesses, and sending them back to main
         for _ in range(ngen):
-            parents = main_to_worker_queue.get()
-            if len(parents) == 0: # main sends [] when done
+            allparams = main_to_worker_queue.get()
+            if len(allparams) == 0: # main sends [] when done
                 break
-            for parent in parents:
-                fitness, steps = self.problem.eval_params(parent)
-                worker_to_main_queue.put(WorkerToMainItem(params=parent, fitness=fitness, steps=steps))
+            for params in allparams:
+                fitness, steps = self.problem.eval_params(params)
+                worker_to_main_queue.put(WorkerToMainItem(params=params, fitness=fitness, steps=steps))
                 
     def _get_fitnesses(self, worker_to_main_queue):
 
         batch_steps = 0
         population = []
-        pop_size = self.parents_per_worker * self.workers_count
+        pop_size = self.evals_per_worker * self.workers_count
         while len(population) < pop_size:
             out_item = worker_to_main_queue.get()
             population.append((out_item.params, out_item.fitness))
