@@ -180,6 +180,9 @@ class NSGA2:
         # Set up communication with workers and send them the initial population
         main_to_worker_queues, worker_to_main_queue, workers = self._setup_workers(ngen)
 
+        # Send initial population to workers
+        self._send_to_workers(main_to_worker_queues, [self.problem.new_params() for _ in range(self.pop_size)])
+
         # Get results from workers
         population, batch_steps = self._get_fitnesses(worker_to_main_queue)
 
@@ -234,9 +237,13 @@ class NSGA2:
             w = mp.Process(target=self._worker_func, args=(ngen, k, main_to_worker_queue, worker_to_main_queue))
             workers.append(w)
             w.start()
-            main_to_worker_queue.put([self.problem.new_params() for _ in range(self.parents_per_worker)])
 
         return main_to_worker_queues, worker_to_main_queue, workers
+
+    def _send_to_workers(self, main_to_worker_queues, population):
+
+        for k,queue in enumerate(main_to_worker_queues):
+            queue.put(population[k*self.parents_per_worker:(k+1)*self.parents_per_worker])
 
     def _worker_func(self, ngen, worker_id, main_to_worker_queue, worker_to_main_queue):
 
