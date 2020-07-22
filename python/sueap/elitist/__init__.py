@@ -72,7 +72,6 @@ class Elitist:
                 break
 
             # Send new population to workers
-            #self._update_workers(population, main_to_worker_queues)
             self._send_params(main_to_worker_queues, [population[np.random.randint(self.parents_count)] for _ in range(self.pop_size)])
 
         # Shut down workers after waiting a little for them to finish
@@ -132,16 +131,6 @@ class Elitist:
         print('%04d: mean fitness=%+6.2f\tmax fitness=%+6.2f\tstd fitness=%6.2f\tspeed=%d f/s' % (
             gen_idx, np.mean(fits), np.max(fits), np.std(fits), int(speed)))
 
-    def _update_workers(self, population, main_to_worker_queues):
-
-        for queue in main_to_worker_queues:
-
-            # Select the fittest parents
-            parents = [population[np.random.randint(self.parents_count)] for _ in range(self.parents_per_worker)]
-
-            # Send them to workers
-            queue.put(parents)
-            
     def _halt_workers(self, main_to_worker_queues):
 
         for main_to_worker_queue in main_to_worker_queues:
