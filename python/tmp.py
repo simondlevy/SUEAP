@@ -51,6 +51,5 @@ if __name__ == '__main__':
 
     np.random.seed(0)
 
-    nsga2 = NSGA2(Fon(), 8)
-    #nsga2.animate(30)
-    nsga2.run(2)
+    nsga2 = NSGA2(Fon(), 10)
+    nsga2.animate(30)

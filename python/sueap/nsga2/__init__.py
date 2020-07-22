@@ -9,7 +9,6 @@ MIT License
 import numpy as np
 import multiprocessing as mp
 from time import sleep
-from sueap import _Individual
 
 # Algorithms ---------------------------------------------------------------------------------------
 
@@ -63,13 +62,35 @@ def _nsga_ii(P, Q, N, fsiz, fmin, fmax):
         _crowding_distance_assignment(list(F[i]), fsiz, fmin, fmax) # Calculate crowding-distance in F_i
         P = P.union(F[i])                                           # Include ith nondominated front in the parent pop
         i += 1                                                      # Check the next front for inclusion
-        print(i, len(P), len(F), N)
     F[i] = sorted(F[i], key=lambda self:self.n)                     # Sort in descending order using <_n
     P = P.union(F[i][:(N-len(P))])                                  # Choose the first (N-|P_{t+1}) elements of F_i
 
     return P
 
 # Internal classes ----------------------------------------------------------------------------------
+
+class _Individual:
+    '''
+    A class to support sorting of individuals in a population
+    '''
+
+    def __init__(self, x):
+
+        self.x = x
+        self.f = None
+
+        self.S        = None
+        self.rank     = None
+        self.n        = None
+        self.distance = None
+
+    def __lt__(self, other):
+
+        return np.all(self.f < other.f)
+
+    def __str__(self):
+
+        return str((self.x, self.f))
 
 class _Plotter:
     '''
@@ -172,7 +193,7 @@ class NSGA2:
 
             P = _nsga_ii(P, Q, self.pop_size, self.problem.fsiz, self.problem.fmin, self.problem.fmax)
 
-            Q = self.problem.make_new_pop(P, g, ngen)     
+            Q = self.make_new_pop(P, g, ngen)     
 
             if plotter is None:
                 print('%04d/%04d' % (g+1, ngen))
@@ -190,3 +211,44 @@ class NSGA2:
 
             for p,f in zip(P, pool.map(self.problem.eval, P)):
                 p.f = f
+
+    def make_new_pop(self, P, g, G):
+        '''
+        Standard implementation of make_new_pop:
+            - tournament selection
+            - crossover
+            - mutation
+        Inputs:
+            P   a population
+            g   current generation (for scaling mutation)
+            G   total number of generations (for scaling mutation)
+        '''
+     
+        Q = set()
+
+        # goal is N children
+        N = len(P)
+
+        # tournament selection
+        selected = set()
+        for _ in range(N):
+            p1 = self.pick(P)
+            p2 = self.pick(P)
+            selected.add(p1 if p1 < p2 else p2)
+
+        # recombination (crossover)
+        for _ in range(N):
+            child = self.pick(selected)
+            Q.add(_Individual(self.problem.crossover(child, self.pick(selected)) if np.random.random()<self.problem.pc else child.x))
+
+        # mutation, scaled by fraction of generations passed 
+        for q in Q:
+            self.problem.mutate(q, g, G)
+
+        return Q
+
+    def pick(self, P):
+        '''
+        Returns a randomly-chosen individual from set P
+        '''
+        return np.random.choice(tuple(P))

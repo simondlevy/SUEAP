@@ -167,6 +167,25 @@ class NSGA2:
         self.workers_count = mp.cpu_count()
         self.parents_per_worker = self.pop_size // self.workers_count
 
+    def animate(self, ngen, axes=(0,1), imagename=None):
+        '''
+        Inputs:
+            ngen       Number of generations
+            axes       Axis indices for 2D plot
+            imagename  Prefix for image file names
+        '''
+
+        from threading import Thread
+
+        plotter = _Plotter(self.problem.fmin, self.problem.fmax, axes, imagename)
+
+        thread = Thread(target=self._run, args=(ngen, plotter))
+        thread.daemon = True
+        thread.start()
+
+        # Plot runs on main thread
+        plotter.start() 
+
     def run(self, ngen):
         '''
         Inputs:
@@ -213,11 +232,13 @@ class NSGA2:
             # Send new population to workers
             self._send_to_workers(main_to_worker_queues, Qparams)
 
-            # Get results from workers
-            Qfits, batch_steps = self._get_fitnesses(worker_to_main_queue)
+            if gen_idx < ngen-1:
 
-            for qfit in Qfits:
-                print(qfit)
+                # Get results from workers
+                Qfits, batch_steps = self._get_fitnesses(worker_to_main_queue)
+
+                # Combine parameters and fitnesses to work with NSGA-II algorithm
+                Q = set([_Individual(p[0], p[1]) for p in Qfits])
 
         # Shut down workers after waiting a little for them to finish
         time.sleep(0.25)
@@ -256,7 +277,7 @@ class NSGA2:
             for parent in parents:
                 fitness, steps = self.problem.eval_params(parent)
                 worker_to_main_queue.put(WorkerToMainItem(params=parent, fitness=fitness, steps=steps))
-                
+
     def _get_fitnesses(self, worker_to_main_queue):
 
         batch_steps = 0

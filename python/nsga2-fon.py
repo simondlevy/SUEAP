@@ -9,10 +9,9 @@ MIT License
 
 import numpy as np
 
-from sueap import Problem
 from sueap.nsga2 import NSGA2
 
-class Fon(Problem):
+class Fon:
 
     PM   = .01
     PC   = .7
@@ -54,5 +53,5 @@ if __name__ == '__main__':
 
     np.random.seed(0)
 
-    nsga2 = NSGA2(Fon(), 8)
-    nsga2.run(1)
+    nsga2 = NSGA2(Fon(), 100)
+    nsga2.animate(30)
