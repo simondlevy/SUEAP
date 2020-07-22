@@ -53,4 +53,4 @@ if __name__ == '__main__':
 
     nsga2 = NSGA2(Fon(), 8)
     #nsga2.animate(30)
-    nsga2.run(1)
+    nsga2.run(2)

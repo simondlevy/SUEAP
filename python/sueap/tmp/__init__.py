@@ -202,7 +202,7 @@ class NSGA2:
             P = _nsga_ii(P, Q, self.pop_size, self.problem.fsiz, self.problem.fmin, self.problem.fmax)
 
             # Run crossover and mutation on genomes to get new population
-            newpop = self._make_new_pop(P, gen_idx, ngen)     
+            Qparams = self._make_new_pop(P, gen_idx, ngen)     
 
             if plotter is None:
                 print('%04d/%04d' % (gen_idx+1, ngen))
@@ -211,12 +211,13 @@ class NSGA2:
                 time.sleep(1.0)
  
             # Send new population to workers
-            self._send_to_workers(main_to_worker_queues, newpop)
+            self._send_to_workers(main_to_worker_queues, Qparams)
 
-            print(newpop)
-            break
+            # Get results from workers
+            Qfits, batch_steps = self._get_fitnesses(worker_to_main_queue)
 
-            break
+            for qfit in Qfits:
+                print(qfit)
 
         # Shut down workers after waiting a little for them to finish
         time.sleep(0.25)
