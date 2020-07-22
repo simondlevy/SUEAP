@@ -9,7 +9,7 @@ MIT License
 
 import numpy as np
 
-from sueap.tmp import NSGA2
+from sueap.nsga2 import NSGA2
 
 class Fon:
 
@@ -20,16 +20,15 @@ class Fon:
         return 8 * np.random.random(3) - 4
 
     def eval_params(self, x):
-        fitness = np.array((1 - np.exp(-np.sum((x-1/np.sqrt(3))**2)), (1 - np.exp(-np.sum((x+1/np.sqrt(3))**2)))))
-        steps = 1
-        return fitness, steps
+        return np.array((1 - np.exp(-np.sum((x-1/np.sqrt(3))**2)), (1 - np.exp(-np.sum((x+1/np.sqrt(3))**2)))))
 
-    def mutate(self, x, g, G):
-        return x + np.random.randn(3) * Fon.PM * (G-g)/G
+    @staticmethod
+    def eval(p):
+        return np.array((1 - np.exp(-np.sum((p.x-1/np.sqrt(3))**2)), (1 - np.exp(-np.sum((p.x+1/np.sqrt(3))**2)))))
 
-    def crossover(self, x1, x2):
-        k = np.random.randint(3-1) + 1
-        return np.append(x1[:k], x2[k:])
+    @staticmethod
+    def mutate(p, g, G):
+        p.x += np.random.randn(3) * Fon.PM * (G-g)/G
 
     @property
     def fmin(self):
@@ -46,6 +45,12 @@ class Fon:
     @property
     def pc(self):
         return self.PC
+
+    @staticmethod
+    def crossover(p, q):
+
+        k = np.random.randint(3-1) + 1
+        return np.append(p.x[:k], q.x[k:])
 
 if __name__ == '__main__':
 

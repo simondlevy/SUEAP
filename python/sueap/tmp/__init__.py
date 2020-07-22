@@ -10,7 +10,6 @@ import collections
 import numpy as np
 import multiprocessing as mp
 from time import sleep
-import random
 
 # Algorithms ---------------------------------------------------------------------------------------
 
@@ -71,18 +70,15 @@ def _nsga_ii(P, Q, N, fsiz, fmin, fmax):
 
 # Internal classes ----------------------------------------------------------------------------------
 
-# Workers use named tuple to send results back to main
-WorkerToMainItem = collections.namedtuple('WorkerToMainItem', field_names=['params', 'fitness', 'steps'])
-
 class _Individual:
     '''
     A class to support sorting of individuals in a population
     '''
 
-    def __init__(self, x, f):
+    def __init__(self, x):
 
         self.x = x
-        self.f = f
+        self.f = None
 
         self.S        = None
         self.rank     = None
@@ -194,89 +190,33 @@ class NSGA2:
 
     def _run(self, ngen, plotter=None):
 
-        # Set up communication with workers and send them the initial population
-        main_to_worker_queues, worker_to_main_queue, workers = self._setup_workers(ngen)
+        P = set([_Individual(self.problem.new_params()) for _ in range(self.pop_size)])
+        self._eval_fits(P)
 
-        pop = [self.problem.new_params() for _ in range(self.pop_size)]
-
-        self._send_to_workers(main_to_worker_queues, pop)
-        pf, steps = self._get_fitnesses(worker_to_main_queue)
-
-        qf = []
+        Q = set()
 
         for g in range(ngen):
 
-            P = _nsga_ii(self._pop_to_set(pf), self._pop_to_set(qf), self.pop_size, self.problem.fsiz, self.problem.fmin, self.problem.fmax)
+            P = _nsga_ii(P, Q, self.pop_size, self.problem.fsiz, self.problem.fmin, self.problem.fmax)
 
-            newpop = self.make_new_pop(P, g, ngen)     
+            Q = self.make_new_pop(P, g, ngen)     
 
             if plotter is None:
                 print('%04d/%04d' % (g+1, ngen))
             else:
                 plotter.update(P,g,ngen)
-                sleep(0.1)
+                sleep(.1)
 
-            self._send_to_workers(main_to_worker_queues, newpop)
-            qf, steps = self._get_fitnesses(worker_to_main_queue)
-            
-        self._halt_workers(main_to_worker_queues)
-
-    def _pop_to_set(self, pf):
-
-        return set([_Individual(p,f) for p,f in pf])
+            self._eval_fits(Q)
 
     def _eval_fits(self, P):
+
+        P = list(P)
 
         with mp.Pool(processes=mp.cpu_count()) as pool:
 
             for p,f in zip(P, pool.map(self.problem.eval, P)):
                 p.f = f
-
-    def _setup_workers(self, ngen):
-
-        main_to_worker_queues = []
-        worker_to_main_queue = mp.Queue(self.workers_count)
-        workers = []
-        for k in range(self.workers_count):
-            main_to_worker_queue = mp.Queue()
-            main_to_worker_queues.append(main_to_worker_queue)
-            w = mp.Process(target=self._worker_func, args=(ngen, k, main_to_worker_queue, worker_to_main_queue))
-            workers.append(w)
-            w.start()
-
-        return main_to_worker_queues, worker_to_main_queue, workers
-
-    def _worker_func(self, ngen, worker_id, main_to_worker_queue, worker_to_main_queue):
-
-        # Loop over generations, getting parent param dictionaries from main process and mutating to get new population
-        for _ in range(ngen):
-            parents = main_to_worker_queue.get()
-            if len(parents) == 0: # main sends [] when done
-                break
-            for parent in parents:
-                fitness, steps = self.problem.eval_params(parent)
-                worker_to_main_queue.put(WorkerToMainItem(params=parent, fitness=fitness, steps=steps))
- 
-    def _send_to_workers(self, main_to_worker_queues, population):
-
-        for k,queue in enumerate(main_to_worker_queues):
-            queue.put(population[k*self.parents_per_worker:(k+1)*self.parents_per_worker])
-
-    def _get_fitnesses(self, worker_to_main_queue):
-
-        batch_steps = 0
-        population = []
-        while len(population) < self.pop_size: # XXX shouldn't have to make pop-size a multiple of worker count
-            out_item = worker_to_main_queue.get()
-            population.append((out_item.params, out_item.fitness))
-            batch_steps += out_item.steps
-        return population, batch_steps
-
-    def _halt_workers(self, main_to_worker_queues):
-
-        for main_to_worker_queue in main_to_worker_queues:
-
-            main_to_worker_queue.put([])
 
     def make_new_pop(self, P, g, G):
         '''
@@ -289,25 +229,32 @@ class NSGA2:
             g   current generation (for scaling mutation)
             G   total number of generations (for scaling mutation)
         '''
-
-        newpop = []
+     
+        Q = set()
 
         # goal is N children
         N = len(P)
 
         # tournament selection
-        selected = []
+        selected = set()
         for _ in range(N):
-            p1 = random.choice(list(P))
-            p2 = random.choice(list(P))
-            selected.append(p1.x if p1 < p2 else p2.x)
+            p1 = self.pick(P)
+            p2 = self.pick(P)
+            selected.add(p1 if p1 < p2 else p2)
 
-        # recombination (crossover) and mutation
+        # recombination (crossover)
         for _ in range(N):
-            child = random.choice(selected)
-            if np.random.random() < self.problem.pc:
-                child = self.problem.crossover(child, random.choice(selected))
-            child = self.problem.mutate(child, g, G)
-            newpop.append(child)
+            child = self.pick(selected)
+            Q.add(_Individual(self.problem.crossover(child, self.pick(selected)) if np.random.random()<self.problem.pc else child.x))
 
-        return newpop
+        # mutation, scaled by fraction of generations passed 
+        for q in Q:
+            self.problem.mutate(q, g, G)
+
+        return Q
+
+    def pick(self, P):
+        '''
+        Returns a randomly-chosen individual from set P
+        '''
+        return np.random.choice(tuple(P))
