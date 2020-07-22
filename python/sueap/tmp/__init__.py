@@ -218,12 +218,12 @@ class NSGA2(GA):
         ps = list(P)
         xs = [p.x for p in P]
 
-        fs = [self.problem.eval_params(x) for x in xs]
+        fs1 = [self.problem.eval_params(x)[0] for x in xs]
    
         GA.send_params(self, xs)
         GA.get_fitnesses(self)
 
-        for p,f in zip(ps,fs):
+        for p,f in zip(ps,fs1):
             p.f = f
 
     def make_new_pop(self, P, g, G):
