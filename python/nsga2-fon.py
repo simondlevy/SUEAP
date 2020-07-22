@@ -19,7 +19,7 @@ class Fon:
     def new_params(self):
         return 8 * np.random.random(3) - 4
 
-    def eval_params(x):
+    def eval_params(self, x):
         return np.array((1 - np.exp(-np.sum((x-1/np.sqrt(3))**2)), (1 - np.exp(-np.sum((x+1/np.sqrt(3))**2)))))
 
     @staticmethod

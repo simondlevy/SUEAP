@@ -198,6 +198,9 @@ class NSGA2:
 
         pop = [self.problem.new_params() for _ in range(self.pop_size)]
 
+        self._send_to_workers(main_to_worker_queues, pop)
+        fits, steps = self._get_fitnesses(worker_to_main_queue)
+
         P = set([_Individual(p) for p in pop])
         self._eval_fits(P)
 
@@ -253,6 +256,22 @@ class NSGA2:
                 fitness, steps = self.problem.eval_params(parent)
                 worker_to_main_queue.put(WorkerToMainItem(params=parent, fitness=fitness, steps=steps))
  
+    def _send_to_workers(self, main_to_worker_queues, population):
+
+        for k,queue in enumerate(main_to_worker_queues):
+            queue.put(population[k*self.parents_per_worker:(k+1)*self.parents_per_worker])
+
+    def _get_fitnesses(self, worker_to_main_queue):
+
+        batch_steps = 0
+        population = []
+        pop_size = self.parents_per_worker * self.workers_count
+        while len(population) < pop_size:
+            out_item = worker_to_main_queue.get()
+            population.append((out_item.params, out_item.fitness))
+            batch_steps += out_item.steps
+        return population, batch_steps
+
     def _halt_workers(self, main_to_worker_queues):
 
         for main_to_worker_queue in main_to_worker_queues:
