@@ -50,5 +50,8 @@ class Fon:
 
 if __name__ == '__main__':
 
-    nsga2 = NSGA2(Fon(), 104)
-    nsga2.animate(30)
+    #nsga2 = NSGA2(Fon(), 104)
+    #nsga2.run(30)
+
+    nsga2 = NSGA2(Fon(), 8)
+    nsga2.run(5)

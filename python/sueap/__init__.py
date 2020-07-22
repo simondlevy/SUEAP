@@ -49,16 +49,20 @@ class GA:
 
             queue.put(params[k*self.evals_per_worker:(k+1)*self.evals_per_worker])
 
+        print('sent')
                
     def get_fitnesses(self):
 
         batch_steps = 0
         population = []
         pop_size = self.evals_per_worker * self.workers_count
+        print('receiving ...')
         while len(population) < pop_size:
-            out_item = self.worker_to_main_queue.get()
-            population.append((out_item.params, out_item.fitness))
-            batch_steps += out_item.steps
+            item = self.worker_to_main_queue.get()
+            print('item: ', item)
+            population.append((item.params, item.fitness))
+            batch_steps += item.steps
+        print('got')
         return population, batch_steps
     
     def halt_workers(self):

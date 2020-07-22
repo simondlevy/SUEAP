@@ -207,10 +207,10 @@ class NSGA2(GA):
                 plotter.update(P,g,ngen)
                 sleep(0.1)
 
-            self._eval_fits(Q)
+            if g<ngen-1:
+                self._eval_fits(Q)
 
         # Shut down workers after waiting a little for them to finish
-        GA.halt_workers(self)
         GA.shutdown_workers(self)
 
     def _eval_fits(self, P):
@@ -219,6 +219,9 @@ class NSGA2(GA):
         xs = [p.x for p in P]
 
         fs = [self.problem.eval_params(x) for x in xs]
+   
+        GA.send_params(self, xs)
+        GA.get_fitnesses(self)
 
         for p,f in zip(ps,fs):
             p.f = f
