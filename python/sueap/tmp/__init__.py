@@ -212,7 +212,7 @@ class NSGA2:
     def _eval_fits(self, P):
 
         for p in P:
-            p.f = self.problem.eval(p)
+            p.f = self.problem.eval_params(p.x)
 
     def make_new_pop(self, P, g, G):
         '''

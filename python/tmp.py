@@ -9,7 +9,7 @@ MIT License
 
 import numpy as np
 
-from sueap.nsga2 import NSGA2
+from sueap.tmp import NSGA2
 
 class Fon:
 
@@ -21,10 +21,6 @@ class Fon:
 
     def eval_params(self, x):
         return np.array((1 - np.exp(-np.sum((x-1/np.sqrt(3))**2)), (1 - np.exp(-np.sum((x+1/np.sqrt(3))**2)))))
-
-    @staticmethod
-    def eval(p):
-        return np.array((1 - np.exp(-np.sum((p.x-1/np.sqrt(3))**2)), (1 - np.exp(-np.sum((p.x+1/np.sqrt(3))**2)))))
 
     @staticmethod
     def mutate(p, g, G):
