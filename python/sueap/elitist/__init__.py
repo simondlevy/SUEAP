@@ -32,8 +32,11 @@ class Elitist:
         Returns fittest individual.
         '''
 
-        # Set up communication with workers and send them the initial population
+        # Set up communication with workers
         main_to_worker_queues, worker_to_main_queue, workers = self._setup_workers(ngen)
+
+        # Send initial population parameters
+        self._send_params(main_to_worker_queues, [self.problem.new_params() for _ in range(self.pop_size)])
 
         # This will store the fittest individual in the population and its fitness
         best = None
@@ -69,7 +72,8 @@ class Elitist:
                 break
 
             # Send new population to workers
-            self._update_workers(population, main_to_worker_queues)
+            #self._update_workers(population, main_to_worker_queues)
+            self._send_params(main_to_worker_queues, [population[np.random.randint(self.parents_count)] for _ in range(self.pop_size)])
 
         # Shut down workers after waiting a little for them to finish
         time.sleep(0.25)
@@ -90,9 +94,14 @@ class Elitist:
             w = mp.Process(target=self._worker_func, args=(ngen, k, main_to_worker_queue, worker_to_main_queue))
             workers.append(w)
             w.start()
-            main_to_worker_queue.put([self.problem.new_params() for _ in range(self.parents_per_worker)])
 
         return main_to_worker_queues, worker_to_main_queue, workers
+
+    def _send_params(self, main_to_worker_queues, params):
+
+        for k,queue in enumerate(main_to_worker_queues):
+
+            queue.put(params[k*self.parents_per_worker:(k+1)*self.parents_per_worker])
 
     def _worker_func(self, ngen, worker_id, main_to_worker_queue, worker_to_main_queue):
 
@@ -125,13 +134,13 @@ class Elitist:
 
     def _update_workers(self, population, main_to_worker_queues):
 
-        for main_to_worker_queue in main_to_worker_queues:
+        for queue in main_to_worker_queues:
 
             # Select the fittest parents
             parents = [population[np.random.randint(self.parents_count)] for _ in range(self.parents_per_worker)]
 
             # Send them to workers
-            main_to_worker_queue.put(parents)
+            queue.put(parents)
             
     def _halt_workers(self, main_to_worker_queues):
 
