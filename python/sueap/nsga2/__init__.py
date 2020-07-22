@@ -70,9 +70,6 @@ def _nsga_ii(P, Q, N, fsiz, fmin, fmax):
 
 # Internal classes ----------------------------------------------------------------------------------
 
-# Workers use named tuple to send results back to main
-WorkerToMainItem = collections.namedtuple('WorkerToMainItem', field_names=['params', 'fitness', 'steps'])
-
 class _Individual:
     '''
     A class to support sorting of individuals in a population
@@ -193,15 +190,7 @@ class NSGA2:
 
     def _run(self, ngen, plotter=None):
 
-        # Set up communication with workers and send them the initial population
-        main_to_worker_queues, worker_to_main_queue, workers = self._setup_workers(ngen)
-
-        pop = [self.problem.new_params() for _ in range(self.pop_size)]
-
-        self._send_to_workers(main_to_worker_queues, pop)
-        fits, steps = self._get_fitnesses(worker_to_main_queue)
-
-        P = set([_Individual(p) for p in pop])
+        P = set([_Individual(self.problem.new_params()) for _ in range(self.pop_size)])
         self._eval_fits(P)
 
         Q = set()
@@ -216,11 +205,9 @@ class NSGA2:
                 print('%04d/%04d' % (g+1, ngen))
             else:
                 plotter.update(P,g,ngen)
-                sleep(1.0)
+                sleep(.1)
 
             self._eval_fits(Q)
-            
-        self._halt_workers(main_to_worker_queues)
 
     def _eval_fits(self, P):
 
@@ -230,53 +217,6 @@ class NSGA2:
 
             for p,f in zip(P, pool.map(self.problem.eval, P)):
                 p.f = f
-
-    def _setup_workers(self, ngen):
-
-        main_to_worker_queues = []
-        worker_to_main_queue = mp.Queue(self.workers_count)
-        workers = []
-        for k in range(self.workers_count):
-            main_to_worker_queue = mp.Queue()
-            main_to_worker_queues.append(main_to_worker_queue)
-            w = mp.Process(target=self._worker_func, args=(ngen, k, main_to_worker_queue, worker_to_main_queue))
-            workers.append(w)
-            w.start()
-
-        return main_to_worker_queues, worker_to_main_queue, workers
-
-    def _worker_func(self, ngen, worker_id, main_to_worker_queue, worker_to_main_queue):
-
-        # Loop over generations, getting parent param dictionaries from main process and mutating to get new population
-        for _ in range(ngen):
-            parents = main_to_worker_queue.get()
-            if len(parents) == 0: # main sends [] when done
-                break
-            for parent in parents:
-                fitness, steps = self.problem.eval_params(parent)
-                worker_to_main_queue.put(WorkerToMainItem(params=parent, fitness=fitness, steps=steps))
- 
-    def _send_to_workers(self, main_to_worker_queues, population):
-
-        for k,queue in enumerate(main_to_worker_queues):
-            queue.put(population[k*self.parents_per_worker:(k+1)*self.parents_per_worker])
-
-    def _get_fitnesses(self, worker_to_main_queue):
-
-        batch_steps = 0
-        population = []
-        pop_size = self.parents_per_worker * self.workers_count
-        while len(population) < pop_size:
-            out_item = worker_to_main_queue.get()
-            population.append((out_item.params, out_item.fitness))
-            batch_steps += out_item.steps
-        return population, batch_steps
-
-    def _halt_workers(self, main_to_worker_queues):
-
-        for main_to_worker_queue in main_to_worker_queues:
-
-            main_to_worker_queue.put([])
 
     def make_new_pop(self, P, g, G):
         '''

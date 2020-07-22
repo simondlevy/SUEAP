@@ -20,10 +20,16 @@ class Fon:
         return 8 * np.random.random(3) - 4
 
     def eval_params(self, x):
-        return np.array((1 - np.exp(-np.sum((x-1/np.sqrt(3))**2)), (1 - np.exp(-np.sum((x+1/np.sqrt(3))**2))))), 1
+        fitness = np.array((1 - np.exp(-np.sum((x-1/np.sqrt(3))**2)), (1 - np.exp(-np.sum((x+1/np.sqrt(3))**2)))))
+        steps = 1
+        return fitness, steps
 
     def mutate(self, x, g, G):
         return x + np.random.randn(3) * Fon.PM * (G-g)/G
+
+    def crossover(self, x1, x2):
+        k = np.random.randint(3-1) + 1
+        return np.append(x1[:k], x2[k:])
 
     @property
     def fmin(self):
@@ -41,15 +47,7 @@ class Fon:
     def pc(self):
         return self.PC
 
-    @staticmethod
-    def crossover(p, q):
-
-        k = np.random.randint(3-1) + 1
-        return np.append(p.x[:k], q.x[k:])
-
 if __name__ == '__main__':
 
-    np.random.seed(0)
-
-    nsga2 = NSGA2(Fon(), 10)
+    nsga2 = NSGA2(Fon(), 104)
     nsga2.animate(30)
