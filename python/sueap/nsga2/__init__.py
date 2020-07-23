@@ -6,10 +6,9 @@ Copyright (C) 2020 Simon D. Levy
 MIT License
 '''
 
-import collections
 import numpy as np
-import multiprocessing as mp
 from time import sleep
+from sueap import GA
 
 # Algorithms ---------------------------------------------------------------------------------------
 
@@ -75,10 +74,10 @@ class _Individual:
     A class to support sorting of individuals in a population
     '''
 
-    def __init__(self, x):
+    def __init__(self, x, f=None):
 
         self.x = x
-        self.f = None
+        self.f = f
 
         self.S        = None
         self.rank     = None
@@ -133,6 +132,9 @@ class _Plotter:
                     self.plt.savefig('%s_%04d.png' % (self.imagename, self.g))
                     self.gprev = self.g
 
+        self.fig.canvas.draw()
+        self.fig.canvas.flush_events()
+
         if not self.done:
             return self.ln,
 
@@ -146,7 +148,7 @@ class _Plotter:
 
 # Exported classes ----------------------------------------------------------------------------------
 
-class NSGA2:
+class NSGA2(GA):
 
     def __init__(self, problem, pop_size=100):
         '''
@@ -154,12 +156,7 @@ class NSGA2:
             problem  An object subclassing nsga2.Problem
             pop_size Population size
         '''
-        self.problem = problem
-        self.pop_size = pop_size
-
-        # Use all available CPUs, distributing the population equally among them
-        self.workers_count = mp.cpu_count()
-        self.parents_per_worker = self.pop_size // self.workers_count
+        GA.__init__(self, problem, pop_size)
 
     def animate(self, ngen, axes=(0,1), imagename=None):
         '''
@@ -190,8 +187,11 @@ class NSGA2:
 
     def _run(self, ngen, plotter=None):
 
+        # Set up communication with workers
+        GA.setup_workers(self, ngen)
+
         P = set([_Individual(self.problem.new_params()) for _ in range(self.pop_size)])
-        self._eval_fits(P)
+        P = self._eval_fits(P)
 
         Q = set()
 
@@ -205,18 +205,24 @@ class NSGA2:
                 print('%04d/%04d' % (g+1, ngen))
             else:
                 plotter.update(P,g,ngen)
-                sleep(.1)
+                sleep(0.1)
 
-            self._eval_fits(Q)
+            if g<ngen-1:
+                Q = self._eval_fits(Q)
+
+        # Shut down workers after waiting a little for them to finish
+        GA.shutdown_workers(self)
 
     def _eval_fits(self, P):
 
-        P = list(P)
+        # Send parameters to workers
+        GA.send_params(self, [p.x for p in P])
 
-        with mp.Pool(processes=mp.cpu_count()) as pool:
+        # Get back parameter/fitness pairs
+        fs, _ = GA.get_fitnesses(self)
 
-            for p,f in zip(P, pool.map(self.problem.eval, P)):
-                p.f = f
+        # Rebuild population with fitnesses
+        return set([_Individual(x, f) for x,f in fs])
 
     def make_new_pop(self, P, g, G):
         '''
