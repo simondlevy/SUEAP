@@ -7,7 +7,7 @@ MIT License
 '''
 
 import numpy as np
-from time import sleep
+import time
 from sueap import GA
 
 # Algorithms ---------------------------------------------------------------------------------------
@@ -144,7 +144,7 @@ class _Plotter:
         self.ln.set_data([p.f[self.axes[0]] for p in P], [p.f[self.axes[1]] for p in P])
         self.ax.set_title('%d/%d' % (g+1,G))
         self.g = g
-        sleep(0.1)
+        time.sleep(1.0)
 
 # Exported classes ----------------------------------------------------------------------------------
 
