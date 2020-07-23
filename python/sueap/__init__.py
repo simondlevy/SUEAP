@@ -80,6 +80,5 @@ class GA:
                 break
             for params in allparams:
                 fitness, steps = self.problem.eval_params(params)
-                print(fitness, steps)
                 self.worker_to_main_queue.put(WorkerToMainItem(params=params, fitness=fitness, steps=steps))
  

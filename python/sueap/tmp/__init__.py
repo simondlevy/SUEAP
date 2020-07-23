@@ -191,7 +191,7 @@ class NSGA2(GA):
         GA.setup_workers(self, ngen)
 
         P = set([_Individual(self.problem.new_params()) for _ in range(self.pop_size)])
-        self._eval_fits(P)
+        P = self._eval_fits(P)
 
         Q = set()
 
@@ -208,7 +208,7 @@ class NSGA2(GA):
                 sleep(0.1)
 
             if g<ngen-1:
-                self._eval_fits(Q)
+                Q = self._eval_fits(Q)
 
         # Shut down workers after waiting a little for them to finish
         GA.shutdown_workers(self)
@@ -221,10 +221,16 @@ class NSGA2(GA):
         fs1 = [self.problem.eval_params(x)[0] for x in xs]
    
         GA.send_params(self, xs)
-        GA.get_fitnesses(self)
+        fs2, _ = GA.get_fitnesses(self)
 
-        for p,f in zip(ps,fs1):
+        for k in range(8):
+            print(fs2[k][0], '\t', fs2[k][1])
+            print()
+
+        for p,f in zip(ps, fs1):
             p.f = f
+
+        return P
 
     def make_new_pop(self, P, g, G):
         '''
