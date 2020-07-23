@@ -16,9 +16,17 @@ import multiprocessing as mp
 _WorkerToMainItem = collections.namedtuple('_WorkerToMainItem', field_names=['params', 'fitness', 'steps'])
 
 class GA:
+    '''
+    GA superclass for distributed fitness evaluation.
+    '''
 
     def __init__(self, problem, pop_size):
-
+        '''
+        Inputs:
+            problem  an object providing new_params() and eval_params() methods
+            pop_size population size
+        '''
+ 
         self.problem = problem
         self.pop_size = pop_size
 
@@ -31,7 +39,12 @@ class GA:
         self.workers = None
 
     def start_workers(self, ngen):
-
+        '''
+        Starts the workers for evaluating sub-population fitnesses.
+        Inputs:
+            ngen number of generations to run
+        '''
+ 
         self.main_to_worker_queues = []
         self.worker_to_main_queue = mp.Queue(self.workers_count)
         self.workers = []
@@ -43,7 +56,15 @@ class GA:
             w.start()
 
     def compute_fitness(self, params):
-
+        '''
+        Sends sub-populations to workers to compute fitness.
+        Inputs:
+            params list of arrays of parameters from each population member
+        Returns: 
+            a list of pairs of the form (params,fitness), one for each population member
+            a count of the number of evaluation steps taken to compute the fitness
+        '''
+ 
         population = []
         steps = 0
 
@@ -70,12 +91,18 @@ class GA:
         return population, steps
     
     def halt_workers(self):
-
+        '''
+        Halts workers before they have completed the specified number of generations; for example, when
+        a desired maximum fitness has been achieved.
+        '''
         for queue in self.main_to_worker_queues:
 
             queue.put([])
 
     def shutdown_workers(self):
+        '''
+        Shuts down workers after pausing a brief interval for them to complete.
+        '''
         time.sleep(0.25)
         for w in self.workers:
             w.join()
