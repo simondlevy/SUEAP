@@ -249,21 +249,21 @@ class NSGA2(GA):
         # tournament selection
         selected = set()
         for _ in range(N):
-            p1 = self.pick(P)
-            p2 = self.pick(P)
+            p1 = self._pick(P)
+            p2 = self._pick(P)
             selected.add(p1 if p1 < p2 else p2)
 
         # recombination (crossover) and mutation
         for _ in range(N):
-            child = self.pick(selected)
-            q = _Individual((self.problem.crossover(child, self.pick(selected)) 
+            child = self._pick(selected)
+            q = _Individual((self.problem.crossover(child, self._pick(selected)) 
                 if np.random.random()<self.problem.pc else child.x))
             self.problem.mutate(q, g, G) # scale mutation by fraction of generations completed
             Q.add(q)
 
         return Q
 
-    def pick(self, P):
+    def _pick(self, P):
         '''
         Returns a randomly-chosen individual from set P
         '''
