@@ -222,7 +222,7 @@ class NSGA2(GA):
         GA.send_params(self, xs)
         fs2, _ = GA.get_fitnesses(self)
 
-        PP = [_Individual(x, f) for x,f in fs2]
+        PP = set([_Individual(x, f) for x,f in fs2])
 
         P = set([_Individual(x, f) for x,f in zip(xs,fs1)])
 
