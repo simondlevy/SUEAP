@@ -253,14 +253,13 @@ class NSGA2(GA):
             p2 = self.pick(P)
             selected.add(p1 if p1 < p2 else p2)
 
-        # recombination (crossover)
+        # recombination (crossover) and mutation
         for _ in range(N):
             child = self.pick(selected)
-            Q.add(_Individual(self.problem.crossover(child, self.pick(selected)) if np.random.random()<self.problem.pc else child.x))
-
-        # mutation, scaled by fraction of generations passed 
-        for q in Q:
-            self.problem.mutate(q, g, G)
+            q = _Individual((self.problem.crossover(child, self.pick(selected)) 
+                if np.random.random()<self.problem.pc else child.x))
+            self.problem.mutate(q, g, G) # scale mutation by fraction of generations completed
+            Q.add(q)
 
         return Q
 
