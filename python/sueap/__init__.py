@@ -8,12 +8,12 @@ Copyright (C) 2020 Simon D. Levy
 MIT License
 '''
 
-from time import sleep
+import time
 import collections
 import multiprocessing as mp
 
 # Workers use named tuple to send results back to main
-WorkerToMainItem = collections.namedtuple('WorkerToMainItem', field_names=['params', 'fitness', 'steps'])
+_WorkerToMainItem = collections.namedtuple('_WorkerToMainItem', field_names=['params', 'fitness', 'steps'])
 
 class GA:
 
@@ -76,7 +76,7 @@ class GA:
             queue.put([])
 
     def shutdown_workers(self):
-        sleep(0.25)
+        time.sleep(0.25)
         for w in self.workers:
             w.join()
 
@@ -89,5 +89,5 @@ class GA:
                 break
             for params in allparams:
                 fitness, steps = self.problem.eval_params(params)
-                self.worker_to_main_queue.put(WorkerToMainItem(params=params, fitness=fitness, steps=steps))
+                self.worker_to_main_queue.put(_WorkerToMainItem(params=params, fitness=fitness, steps=steps))
  
