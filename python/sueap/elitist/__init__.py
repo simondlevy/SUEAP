@@ -42,10 +42,8 @@ class Elitist(GA):
             # Start timer for performance tracking
             t_start = time()
 
-            GA.send_params(self, population)
-
-            # Get results from workers
-            population, batch_steps = GA.get_fitnesses(self)
+            # Compute fitnesses of current population member
+            population, batch_steps = GA.compute_fitness(self, population)
 
             # Keep the current best in the population
             if best is not None:

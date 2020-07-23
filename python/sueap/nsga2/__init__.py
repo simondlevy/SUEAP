@@ -216,13 +216,10 @@ class NSGA2(GA):
 
     def _eval_fits(self, P):
 
-        # Send parameters to workers
-        GA.send_params(self, [p.x for p in P])
+        # Send population parameters to workers
+        fs, _ = GA.compute_fitness(self, [p.x for p in P])
 
-        # Get back parameter/fitness pairs
-        fs, _ = GA.get_fitnesses(self)
-
-        # Rebuild population with fitnesses
+        # Rebuild population with parameters and fitnesses
         return set([_Individual(x, f) for x,f in fs])
 
     def make_new_pop(self, P, g, G):

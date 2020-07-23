@@ -43,14 +43,13 @@ class GA:
             self.workers.append(w)
             w.start()
 
-    def send_params(self, params):
+    def compute_fitness(self, params):
 
+        # Send population to workers
         for k,queue in enumerate(self.main_to_worker_queues):
-
             queue.put(params[k*self.evals_per_worker:(k+1)*self.evals_per_worker])
 
-    def get_fitnesses(self):
-
+        # Get back population fitnesses and number of steps taken to compute
         batch_steps = 0
         population = []
         pop_size = self.evals_per_worker * self.workers_count
@@ -58,6 +57,7 @@ class GA:
             item = self.worker_to_main_queue.get()
             population.append((item.params, item.fitness))
             batch_steps += item.steps
+
         return population, batch_steps
     
     def halt_workers(self):
