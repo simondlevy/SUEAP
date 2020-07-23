@@ -24,7 +24,6 @@ class GA:
 
         # Use all available CPUs, distributing the population equally among them
         self.workers_count = mp.cpu_count()
-        self.evals_per_worker = self.pop_size // self.workers_count
 
         # Workers will be set up at start of run
         self.main_to_worker_queues = None
@@ -45,14 +44,16 @@ class GA:
 
     def compute_fitness(self, params):
 
+        evals_per_worker = self.pop_size // self.workers_count
+
         # Send population to workers
         for k,queue in enumerate(self.main_to_worker_queues):
-            queue.put(params[k*self.evals_per_worker:(k+1)*self.evals_per_worker])
+            queue.put(params[k*evals_per_worker:(k+1)*evals_per_worker])
 
         # Get back population fitnesses and number of steps taken to compute
         batch_steps = 0
         population = []
-        pop_size = self.evals_per_worker * self.workers_count
+        pop_size = evals_per_worker * self.workers_count
         while len(population) < pop_size:
             item = self.worker_to_main_queue.get()
             population.append((item.params, item.fitness))
