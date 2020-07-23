@@ -21,14 +21,17 @@ class Elitist(GA):
 
     def run(self, ngen, max_fitness=None):
         '''
-        Returns fittest individual.
+        Inputs:
+            ngen        Number of generations
+            max_fitness optional fitness at which to halt
+        Returns: fittest individual
         '''
 
         # Set up communication with workers
         GA.setup_workers(self, ngen)
 
-        # Send initial population parameters
-        GA.send_params(self, [self.problem.new_params() for _ in range(self.pop_size)])
+        # Start with random population
+        population = [self.problem.new_params() for _ in range(self.pop_size)]
 
         # This will store the fittest individual in the population and its fitness
         best = None
@@ -38,6 +41,8 @@ class Elitist(GA):
 
             # Start timer for performance tracking
             t_start = time()
+
+            GA.send_params(self, population)
 
             # Get results from workers
             population, batch_steps = GA.get_fitnesses(self)
@@ -63,8 +68,8 @@ class Elitist(GA):
                 GA.halt_workers(self)
                 break
 
-            # Send new population to workers
-            GA.send_params(self, [population[np.random.randint(self.parents_count)] for _ in range(self.pop_size)])
+            # Get next population
+            population = [population[np.random.randint(self.parents_count)] for _ in range(self.pop_size)]
 
         # Shut down workers after waiting a little for them to finish
         GA.shutdown_workers(self)
