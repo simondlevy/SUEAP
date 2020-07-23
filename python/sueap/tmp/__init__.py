@@ -74,10 +74,10 @@ class _Individual:
     A class to support sorting of individuals in a population
     '''
 
-    def __init__(self, x):
+    def __init__(self, x, f=None):
 
         self.x = x
-        self.f = None
+        self.f = f
 
         self.S        = None
         self.rank     = None
