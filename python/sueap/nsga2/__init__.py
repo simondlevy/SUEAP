@@ -190,23 +190,28 @@ class NSGA2(GA):
         # Set up communication with workers
         GA.setup_workers(self, ngen)
 
-        P = set([_Individual(self.problem.new_params()) for _ in range(self.pop_size)])
-        P = self._eval_fits(P)
+        # Create initial population and get its fitness
+        P = self._eval_fits(set([_Individual(self.problem.new_params()) for _ in range(self.pop_size)]))
 
+        # Create empty child population
         Q = set()
 
         for g in range(ngen):
 
+            # Run the NSGA-II algorithm on current parents and children, getting new population
             P = _nsga_ii(P, Q, self.pop_size, self.problem.fsiz, self.problem.fmin, self.problem.fmax)
 
+            # Get new child population through selection, mutation, crossover
             Q = self.make_new_pop(P, g, ngen)     
 
+            # Plot or report results
             if plotter is None:
                 print('%04d/%04d' % (g+1, ngen))
             else:
                 plotter.update(P,g,ngen)
                 sleep(0.1)
 
+            # Compute child fitnesses on all but last generation (avoids blocking)
             if g<ngen-1:
                 Q = self._eval_fits(Q)
 
