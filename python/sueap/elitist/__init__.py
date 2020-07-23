@@ -28,7 +28,7 @@ class Elitist(GA):
         '''
 
         # Set up communication with workers
-        GA.setup_workers(self, ngen)
+        GA.start_workers(self, ngen)
 
         # Start with random population
         population = [self.problem.new_params() for _ in range(self.pop_size)]

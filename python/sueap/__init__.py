@@ -31,7 +31,7 @@ class GA:
         self.worker_to_main_queue = None
         self.workers = None
 
-    def setup_workers(self, ngen):
+    def start_workers(self, ngen):
 
         self.main_to_worker_queues = []
         self.worker_to_main_queue = mp.Queue(self.workers_count)

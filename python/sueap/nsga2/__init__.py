@@ -188,7 +188,7 @@ class NSGA2(GA):
     def _run(self, ngen, plotter, plotfun):
 
         # Set up communication with workers
-        GA.setup_workers(self, ngen)
+        GA.start_workers(self, ngen)
 
         # Create initial population and get its fitness
         P = self._eval_fits(set([_Individual(self.problem.new_params()) for _ in range(self.pop_size)]))
