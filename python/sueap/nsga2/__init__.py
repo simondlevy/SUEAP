@@ -150,7 +150,7 @@ class _Plotter:
 
 class NSGA2(GA):
 
-    def __init__(self, problem, pop_size=100):
+    def __init__(self, problem, pop_size):
         '''
         Inputs:
             problem  An object subclassing nsga2.Problem

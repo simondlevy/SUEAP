@@ -14,7 +14,7 @@ from sueap import GA
 
 class Elitist(GA):
 
-    def __init__(self, problem, pop_size=2000, noise_std=0.01, parents_count=10):
+    def __init__(self, problem, pop_size, noise_std=0.01, parents_count=10):
 
         GA.__init__(self, problem, pop_size)
 
