@@ -226,7 +226,7 @@ class NSGA2(GA):
 
         P = set([_Individual(x, f) for x,f in zip(xs,fs1)])
 
-        return P
+        return PP
 
     def make_new_pop(self, P, g, G):
         '''
