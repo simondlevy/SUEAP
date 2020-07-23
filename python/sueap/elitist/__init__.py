@@ -6,10 +6,8 @@ Copyright (C) 2020 Simon D. Levy
 MIT License
 '''
 
-import time
-import collections
+from time import time
 import numpy as np
-import multiprocessing as mp
 from sueap import GA
 
 class Elitist(GA):
@@ -39,7 +37,7 @@ class Elitist(GA):
         for gen_idx in range(ngen):
 
             # Start timer for performance tracking
-            t_start = time.time()
+            t_start = time()
 
             # Get results from workers
             population, batch_steps = GA.get_fitnesses(self)
@@ -62,7 +60,7 @@ class Elitist(GA):
 
             # Quit if maximum fitness reached
             if max_fitness is not None and best[1] >= max_fitness:
-                self._halt_workers()
+                GA.halt_workers(self)
                 break
 
             # Send new population to workers
@@ -77,6 +75,6 @@ class Elitist(GA):
     def _report(self, population, gen_idx, batch_steps, t_start):
 
         fits = [p[1] for p in population[:self.parents_count]]
-        speed = batch_steps / (time.time() - t_start)
+        speed = batch_steps / (time() - t_start)
         print('%04d: mean fitness=%+6.2f\tmax fitness=%+6.2f\tstd fitness=%6.2f\tspeed=%d f/s' % (
             gen_idx, np.mean(fits), np.max(fits), np.std(fits), int(speed)))
