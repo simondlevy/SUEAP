@@ -223,9 +223,7 @@ class NSGA2(GA):
         GA.send_params(self, xs)
         fs2, _ = GA.get_fitnesses(self)
 
-        for k in range(8):
-            print(fs2[k][0], '\t', fs2[k][1])
-            print()
+        PP = [_Individual(x, f) for x,f in fs2]
 
         for p,f in zip(ps, fs1):
             p.f = f
