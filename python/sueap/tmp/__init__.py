@@ -215,7 +215,6 @@ class NSGA2(GA):
 
     def _eval_fits(self, P):
 
-        ps = list(P)
         xs = [p.x for p in P]
 
         fs1 = [self.problem.eval_params(x)[0] for x in xs]
@@ -225,8 +224,7 @@ class NSGA2(GA):
 
         PP = [_Individual(x, f) for x,f in fs2]
 
-        for p,f in zip(ps, fs1):
-            p.f = f
+        P = set([_Individual(x, f) for x,f in zip(xs,fs1)])
 
         return P
 
