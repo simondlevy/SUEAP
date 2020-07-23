@@ -144,7 +144,7 @@ class _Plotter:
         self.ln.set_data([p.f[self.axes[0]] for p in P], [p.f[self.axes[1]] for p in P])
         self.ax.set_title('%d/%d' % (g+1,G))
         self.g = g
-
+        sleep(0.1)
 
 # Exported classes ----------------------------------------------------------------------------------
 
@@ -209,7 +209,6 @@ class NSGA2(GA):
                 print('%04d/%04d' % (g+1, ngen))
             else:
                 plotter.update(P,g,ngen)
-                sleep(0.1)
 
             # Compute child fitnesses on all but last generation (avoids blocking)
             if g<ngen-1:
