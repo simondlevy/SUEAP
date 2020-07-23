@@ -170,7 +170,7 @@ class NSGA2(GA):
 
         plotter = _Plotter(self.problem.fmin, self.problem.fmax, axes, imagename)
 
-        thread = Thread(target=self._run, args=(ngen, plotter))
+        thread = Thread(target=self._run, args=(ngen, plotter, lambda plotter,P,g,ngen : plotter.update(P,g,ngen)))
         thread.daemon = True
         thread.start()
 
@@ -183,9 +183,9 @@ class NSGA2(GA):
             ngen Number of generations
         Returns: population after ngen generations
         '''
-        return self._run(ngen)
+        return self._run(ngen, None, lambda plotter,P,g,ngen : print('%04d/%04d' % (g+1, ngen)))
 
-    def _run(self, ngen, plotter=None):
+    def _run(self, ngen, plotter, plotfun):
 
         # Set up communication with workers
         GA.setup_workers(self, ngen)
@@ -205,10 +205,7 @@ class NSGA2(GA):
             Q = self.make_new_pop(P, g, ngen)     
 
             # Plot or report results
-            if plotter is None:
-                print('%04d/%04d' % (g+1, ngen))
-            else:
-                plotter.update(P,g,ngen)
+            plotfun(plotter, P, g, ngen)
 
             # Compute child fitnesses on all but last generation (avoids blocking)
             if g<ngen-1:
