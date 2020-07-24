@@ -12,7 +12,7 @@ import gym
 
 from sueap.elitist import Elitist
 
-class NefCartPole:
+class NefPendulum:
 
     def __init__(self, neurons=10):
 
@@ -90,7 +90,7 @@ class NefCartPole:
 
     def _curve(self, x):
 
-        return NefCartPole._G(self.alpha * np.dot(x, self.e) + self.b)
+        return NefPendulum._G(self.alpha * np.dot(x, self.e) + self.b)
 
     @staticmethod
     def _G(v):
@@ -105,11 +105,11 @@ class NefCartPole:
 
 if __name__ == '__main__':
 
-    problem = NefCartPole()
+    problem = NefPendulum()
 
     ga = Elitist(problem, 2000)
 
-    best = ga.run(10, max_fitness=2000)
+    best = ga.run(20, max_fitness=2000)
 
     print('Got reward %.3f in %d steps' % problem.run_episode(best, render=True))
 

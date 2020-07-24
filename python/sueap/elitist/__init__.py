@@ -80,4 +80,4 @@ class Elitist(GA):
         fits = [p[1] for p in population[:self.parents_count]]
         speed = batch_steps / (time() - t_start)
         print('%04d: mean fitness=%+6.2f\tmax fitness=%+6.2f\tstd fitness=%6.2f\tspeed=%d f/s' % (
-            gen_idx, np.mean(fits), np.max(fits), np.std(fits), int(speed)))
+            gen_idx+1, np.mean(fits), np.max(fits), np.std(fits), int(speed)))
