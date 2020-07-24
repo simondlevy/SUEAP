@@ -14,7 +14,7 @@ from sueap.elitist import Elitist
 
 class NefPendulum:
 
-    def __init__(self, neurons=10):
+    def __init__(self, neurons=20):
 
         # Encoder
         self.alpha = np.random.uniform(0, 100, neurons) # tuning parameter alpha
@@ -109,7 +109,7 @@ if __name__ == '__main__':
 
     ga = Elitist(problem, 2000)
 
-    best = ga.run(20, max_fitness=2000)
+    best = ga.run(40, max_fitness=2000)
 
     print('Got reward %.3f in %d steps' % problem.run_episode(best, render=True))
 
