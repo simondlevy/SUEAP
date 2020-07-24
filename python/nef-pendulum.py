@@ -107,7 +107,7 @@ if __name__ == '__main__':
 
     problem = NefPendulum()
 
-    ga = Elitist(problem, 2000)
+    ga = Elitist(problem, 2048)
 
     best = ga.run(80, max_fitness=2000)
 
