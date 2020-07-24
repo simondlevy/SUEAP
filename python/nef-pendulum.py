@@ -86,7 +86,8 @@ class NefPendulum:
 
         d = params
 
-        return 2*np.tanh(np.dot(a, d))
+        #return 2*np.tanh(np.dot(a, d))
+        return np.clip(np.dot(a, d), -2, +2)
 
     def _curve(self, x):
 
@@ -109,7 +110,7 @@ if __name__ == '__main__':
 
     ga = Elitist(problem, 2000)
 
-    best = ga.run(40, max_fitness=2000)
+    best = ga.run(80, max_fitness=2000)
 
     print('Got reward %.3f in %d steps' % problem.run_episode(best, render=True))
 
