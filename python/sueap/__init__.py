@@ -58,11 +58,12 @@ class GA:
             self.workers.append(w)
             w.start()
 
-    def compute_fitness(self, params):
+    def compute_fitness(self, params, show_progress=True):
         '''
         Sends sub-populations to workers to compute fitness.
         Inputs:
-            params list of arrays of parameters from each population member
+            params        list of arrays of parameters from each population member
+            show_progress flag for showing progress bar
         Returns: 
             a list of pairs of the form (params,fitness), one for each population member
             a count of the number of evaluation steps taken to compute the fitness
@@ -86,14 +87,16 @@ class GA:
             item = self.worker_to_main_queue.get()
             population.append((item.params, item.fitness))
             steps += item.steps
-            self._show_progress(len(population))
+            if show_progress:
+                self._show_progress(len(population))
 
         # Evaulate remaining population members on main host
         for p in params[pop_size:self.pop_size]:
             f, s = self.problem.eval_params(p)
             population.append((p,f))
             steps += s
-            self._show_progress(len(population))
+            if show_progress:
+                self._show_progress(len(population))
 
         return population, steps
     

@@ -170,7 +170,7 @@ class NSGA2(GA):
 
         plotter = _Plotter(self.problem.fmin, self.problem.fmax, axes, imagename)
 
-        thread = Thread(target=self._run, args=(ngen, plotter, lambda plotter,P,g,ngen : plotter.update(P,g,ngen)))
+        thread = Thread(target=self._run, args=(ngen, plotter, lambda plotter,P,g,ngen : plotter.update(P,g,ngen), False))
         thread.daemon = True
         thread.start()
 
@@ -183,15 +183,15 @@ class NSGA2(GA):
             ngen Number of generations
         Returns: population after ngen generations
         '''
-        return self._run(ngen, None, lambda plotter,P,g,ngen : print('%04d/%04d' % (g+1, ngen)))
+        return self._run(ngen, None, lambda plotter,P,g,ngen : print('%04d/%04d' % (g+1, ngen)), True)
 
-    def _run(self, ngen, plotter, plotfun):
+    def _run(self, ngen, plotter, plotfun, show_progress):
 
         # Set up communication with workers
         GA.start_workers(self, ngen)
 
         # Create initial population and get its fitness
-        P = self._eval_fits(set([_Individual(self.problem.new_params()) for _ in range(self.pop_size)]))
+        P = self._eval_fits(set([_Individual(self.problem.new_params()) for _ in range(self.pop_size)]), show_progress)
 
         # Create empty child population
         Q = set()
@@ -209,15 +209,15 @@ class NSGA2(GA):
 
             # Compute child fitnesses on all but last generation (avoids blocking)
             if g<ngen-1:
-                Q = self._eval_fits(Q)
+                Q = self._eval_fits(Q, show_progress)
 
         # Shut down workers after waiting a little for them to finish
         GA.shutdown_workers(self)
 
-    def _eval_fits(self, P):
+    def _eval_fits(self, P, show_progress):
 
         # Send population parameters to workers
-        fs, _ = GA.compute_fitness(self, [p.x for p in P])
+        fs, _ = GA.compute_fitness(self, [p.x for p in P], show_progress)
 
         # Rebuild population with parameters and fitnesses
         return set([_Individual(x, f) for x,f in fs])
