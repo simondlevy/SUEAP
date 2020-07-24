@@ -126,7 +126,7 @@ class GA:
                 self.worker_to_main_queue.put(_WorkerToMainItem(params=params, fitness=fitness, steps=steps))
 
     def _show_progress(self, ndone):
-        wid = 80
+        wid = 93 # lines up with report
         progress = wid * ndone // self.pop_size
         if progress > self.prev_progress:
             print('\r[' + '*'*progress + ' '*(wid-progress) + ']', end=('\n' if ndone==self.pop_size else ''))
