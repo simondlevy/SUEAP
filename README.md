@@ -47,6 +47,12 @@ To install nsga2 for use in other projects:
 sudo python3 setup.py install
 ```
 
+## Python notes
+
+You can get better performance by using a population size that is a multiple of
+the number of workers (processors, cores, CPUs) available to you.  For example,
+if you have 128 workers, use a population of 2048 instead of 2000.
+
 ## Citing SUEAP
 
 ```
