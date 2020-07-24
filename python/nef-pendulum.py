@@ -86,7 +86,6 @@ class NefPendulum:
 
         d = params
 
-        #return 2*np.tanh(np.dot(a, d))
         return np.clip(np.dot(a, d), -2, +2)
 
     def _curve(self, x):
