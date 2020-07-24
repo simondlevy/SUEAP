@@ -38,6 +38,9 @@ class GA:
         self.worker_to_main_queue = None
         self.workers = None
 
+        # Support for progress bar
+        self.prev_progress = None
+
     def start_workers(self, ngen):
         '''
         Starts the workers for evaluating sub-population fitnesses.
@@ -65,6 +68,8 @@ class GA:
             a count of the number of evaluation steps taken to compute the fitness
         '''
  
+        self.prev_progress = 0
+
         population = []
         steps = 0
 
@@ -81,12 +86,14 @@ class GA:
             item = self.worker_to_main_queue.get()
             population.append((item.params, item.fitness))
             steps += item.steps
+            self._show_progress(len(population))
 
         # Evaulate remaining population members on main host
         for p in params[pop_size:self.pop_size]:
             f, s = self.problem.eval_params(p)
             population.append((p,f))
             steps += s
+            self._show_progress(len(population))
 
         return population, steps
     
@@ -117,4 +124,11 @@ class GA:
             for params in allparams:
                 fitness, steps = self.problem.eval_params(params)
                 self.worker_to_main_queue.put(_WorkerToMainItem(params=params, fitness=fitness, steps=steps))
+
+    def _show_progress(self, ndone):
+        wid = 80
+        progress = wid * ndone // self.pop_size
+        if progress > self.prev_progress:
+            print('\r[' + '*'*progress + ' '*(wid-progress) + ']', end=('\n' if ndone==self.pop_size else ''))
+            self.prev_progress = progress
  
