@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 '''
-Python distutils setup file for nsga2 module.
+Python distutils setup file for sueap module.
 
 Copyright (C) 2020 Simon D. Levy
 
