@@ -6,19 +6,25 @@ Copyright (C) 2020 Simon D. Levy
 MIT License
 '''
 
-from time import time
+import os
+import time
 import numpy as np
 from sueap import GA
 
 class Elitist(GA):
 
-    def __init__(self, problem, pop_size, noise_std=0.01, parents_count=10):
+    def __init__(self, problem, pop_size, noise_std=0.01, parents_count=10, save_name=None):
 
         GA.__init__(self, problem, pop_size)
 
         self.noise_std = noise_std
         self.parents_count = parents_count
         self.max_fitness = None
+
+        self.save_path = None
+        if save_name is not None:
+            self.save_path = os.path.join("saves", "%s" % save_name)
+            os.makedirs(self.save_path, exist_ok=True)
 
     def run(self, ngen, max_fitness=None):
         '''
@@ -41,7 +47,7 @@ class Elitist(GA):
         for gen_idx in range(ngen):
 
             # Start timer for performance tracking
-            t_start = time()
+            t_start = time.time()
 
             # Compute fitnesses of current population member
             population, batch_steps = GA.compute_fitness(self, population)
@@ -80,11 +86,13 @@ class Elitist(GA):
 
         max_fit = population[0][1] # Population is already sorted by fitness
 
+        # Report stats
         fits = [p[1] for p in population[:self.parents_count]]
-        speed = batch_steps / (time() - t_start)
+        speed = batch_steps / (time.time() - t_start)
         print('%04d: mean fitness=%+6.2f\tmax fitness=%+6.2f\tstd fitness=%6.2f\tspeed=%d f/s' % (
             gen_idx+1, np.mean(fits), max_fit, np.std(fits), int(speed)))
 
-        if self.max_fitness is None or max_fit > self.max_fitness:
-            print('New max')
+        # Save new best solution if available
+        if self.save_path is not None and (self.max_fitness is None or max_fit > self.max_fitness):
+            print('Saving to ' + self.save_path)
             self.max_fitness = max_fit
