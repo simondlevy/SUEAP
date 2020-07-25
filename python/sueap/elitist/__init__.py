@@ -98,6 +98,5 @@ class Elitist(GA):
             if self.max_fitness is None or fit > self.max_fitness:
                 fname = '%s/best%+f.dat' % (self.save_path, fit)
                 print('Saving to ' + fname)
-                print(best[0])
-                #pickle.dump(self.problem.make_pickle(), open(fname, 'wb'))
+                pickle.dump(self.problem.make_pickle(best[0]), open(fname, 'wb'))
                 self.max_fitness = fit
