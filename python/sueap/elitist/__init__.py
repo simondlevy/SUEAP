@@ -79,7 +79,12 @@ class Elitist(GA):
     def _report(self, population, gen_idx, batch_steps, t_start):
 
         max_fit = population[0][1] # Population is already sorted by fitness
+
         fits = [p[1] for p in population[:self.parents_count]]
         speed = batch_steps / (time() - t_start)
         print('%04d: mean fitness=%+6.2f\tmax fitness=%+6.2f\tstd fitness=%6.2f\tspeed=%d f/s' % (
             gen_idx+1, np.mean(fits), max_fit, np.std(fits), int(speed)))
+
+        if self.max_fitness is None or max_fit > self.max_fitness:
+            print('New max')
+            self.max_fitness = max_fit
