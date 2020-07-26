@@ -9,7 +9,7 @@ MIT License
 
 import numpy as np
 
-from sueap.nsga2 import NSGA2
+from sueap.algorithms.nsga2 import NSGA2
 
 class Fon:
 

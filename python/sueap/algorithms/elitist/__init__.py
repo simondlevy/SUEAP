@@ -10,7 +10,7 @@ import os
 import time
 import pickle
 import numpy as np
-from sueap import GA
+from sueap.algorithms import GA
 
 class Elitist(GA):
 

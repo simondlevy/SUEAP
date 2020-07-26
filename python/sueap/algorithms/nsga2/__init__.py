@@ -8,7 +8,7 @@ MIT License
 
 import numpy as np
 import time
-from sueap import GA
+from sueap.algorithms import GA
 
 # Algorithms ---------------------------------------------------------------------------------------
 
