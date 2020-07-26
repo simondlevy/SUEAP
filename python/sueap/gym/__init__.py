@@ -9,11 +9,11 @@ MIT License
 import gym
 import numpy as np
 
-class GymProblem:
+class Problem:
 
     def __init__(self, env_name, seed):
         '''
-        Builds a GymProblem object for learning a given environment
+        Builds a an object for learning a given environment
         Inputs:
             env_name the name of the environment
             seed     optional random seed for debugging

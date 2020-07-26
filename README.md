@@ -53,6 +53,14 @@ You can get better performance by using a population size that is a multiple of
 the number of workers (processors, cores, CPUs) available to you.  For example,
 if you have 128 workers, use a population of 2048 instead of 2000.
 
+## Working with OpenAI Gym
+
+The class [sueap.gym.Problem](https://github.com/simondlevy/SUEAP/blob/master/python/sueap/gym/__init__.py)
+is an abstract class that you can use to apply genetic algorithms
+to solving problems (environments) using the [OpenAI Gym](https://gym.openai.com/ framework).  Your
+subclass should implement a method ```get_action(self, params, observation``` that returns the appropriate
+action.
+
 ## Citing SUEAP
 
 ```
