@@ -57,7 +57,7 @@ if you have 128 workers, use a population of 2048 instead of 2000.
 
 The class [sueap.gym.Problem](https://github.com/simondlevy/SUEAP/blob/master/python/sueap/gym/__init__.py)
 is an abstract class that you can use to apply genetic algorithms
-to solving problems (environments) using the [OpenAI Gym](https://gym.openai.com/ framework).  Your
+to solving problems (environments) using the [OpenAI Gym](https://gym.openai.com/) framework.  Your
 subclass should implement a method ```get_action(self, params, observation)``` that returns the appropriate
 action.
 
