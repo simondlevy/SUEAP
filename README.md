@@ -41,7 +41,7 @@ python3 fon.py
 This will show you the performance of NSGA-II on the fitness function from
 [Fonseca and Fleming (1993)](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.48.9077&rep=rep1&type=pdf).
 
-To install nsga2 for use in other projects:
+To install sueap for use in other projects:
 
 ```
 sudo python3 setup.py install
