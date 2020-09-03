@@ -24,8 +24,10 @@ class Problem:
         if seed is not None:
             np.random.seed(seed)
 
-        # Get observation size from environment
-        self.obs_size = gym.make(env_name).observation_space.shape[0]
+        # Get observation space and action space sizes from environment
+        env = gym.make(env_name)
+        self.obs_size = env.observation_space.shape[0]
+        self.act_size = env.action_space.shape[0]
 
         self.seed = seed
         self.env_name = env_name
