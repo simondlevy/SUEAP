@@ -23,7 +23,6 @@ class Elitist(GA):
         self.max_fitness = None
 
         self.save_path = None
-        self.save_dir = None
         self.save_name = None
         if save_dir is not None:
             self.save_name = self.problem.env_name
@@ -99,7 +98,7 @@ class Elitist(GA):
             best = population[0] # population already sorted by fitness
             fit = best[1]
             if self.max_fitness is None or fit > self.max_fitness:
-                fname = '%s/%s%+f.dat' % (self.save_name, self.save_path, fit)
+                fname = '%s/%s%+f.dat' % (self.save_path, self.save_name, fit)
                 print('Saving to ' + fname)
                 pickle.dump(self.problem.make_pickle(best[0]), open(fname, 'wb'))
                 self.max_fitness = fit
