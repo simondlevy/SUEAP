@@ -14,7 +14,7 @@ from sueap.algorithms import GA
 
 class Elitist(GA):
 
-    def __init__(self, problem, pop_size, noise_std=0.01, parents_count=10, save_name=None):
+    def __init__(self, problem, pop_size, noise_std=0.01, parents_count=10, save_dir=None):
 
         GA.__init__(self, problem, pop_size)
 
@@ -23,8 +23,11 @@ class Elitist(GA):
         self.max_fitness = None
 
         self.save_path = None
-        if save_name is not None:
-            self.save_path = os.path.join("saves", "%s" % save_name)
+        self.save_dir = None
+        self.save_name = None
+        if save_dir is not None:
+            self.save_name = self.problem.env_name
+            self.save_path = os.path.join("saves", "%s" % save_dir)
             os.makedirs(self.save_path, exist_ok=True)
 
     def run(self, ngen, max_fitness=None):
@@ -96,7 +99,7 @@ class Elitist(GA):
             best = population[0] # population already sorted by fitness
             fit = best[1]
             if self.max_fitness is None or fit > self.max_fitness:
-                fname = '%s/best%+f.dat' % (self.save_path, fit)
+                fname = '%s/%s%+f.dat' % (self.save_name, self.save_path, fit)
                 print('Saving to ' + fname)
                 pickle.dump(self.problem.make_pickle(best[0]), open(fname, 'wb'))
                 self.max_fitness = fit
