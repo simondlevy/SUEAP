@@ -27,7 +27,7 @@ class Problem:
         # Get observation space and action space sizes from environment
         env = gym.make(env_name)
         self.obs_size = env.observation_space.shape[0]
-        self.act_size = env.action_space.shape[0]
+        self.act_size = env.action_space.shape[0] if hasattr(env.action_space, 'high') else 1
 
         self.seed = seed
         self.env_name = env_name
