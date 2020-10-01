@@ -9,16 +9,9 @@ MIT License
 import gym
 import numpy as np
 
-class Problem:
+class _Problem:
 
-    def __init__(self, env_name, seed):
-        '''
-        Builds a an object for learning a given environment
-        Inputs:
-            env_name the name of the environment
-            seed     optional random seed for debugging
-        Your subclass should provide a method get_action(self, params, observation)
-        '''
+    def __init__(self, env_name, ndims, seed=None):
 
         # Seed random-number generator if indicated
         if seed is not None:
@@ -31,27 +24,6 @@ class Problem:
 
         self.seed = seed
         self.env_name = env_name
-
-    def eval_params(self, params, episodes=10):
-        '''
-        Evaluates parameters for a given number of episodes
-        Inputs:
-            params   paramters to evaluate
-            episodes number of episodes to run
-        Returns: total rewards and total number of steps taken
-        '''
-
-        total_reward = 0
-        total_steps = 0
-
-        for _ in range(episodes):
-
-            episode_reward, episode_steps = self.run_episode(params)
-
-            total_reward += episode_reward
-            total_steps += episode_steps
-
-        return total_reward, total_steps
 
     def run_episode(self, params, render=False):
         '''
@@ -95,3 +67,59 @@ class Problem:
         env.close()
 
         return episode_reward, episode_steps
+
+class MultiobjectiveProblem(_Problem):
+
+    def __init__(self, env_name, ndims, seed=None):
+
+        _Problem.__init__(self, env_name, seed)
+
+        self.ndims = ndims
+
+    def eval_params(self, params, episodes=10):
+        '''
+        Evaluates parameters for a given number of episodes
+        Inputs:
+            params   paramters to evaluate
+            episodes number of episodes to run
+        Returns: total rewards and total number of steps taken
+        '''
+
+        total_reward = np.zeros(self.ndims)
+        total_steps = 0
+
+        for _ in range(episodes):
+
+            episode_reward, episode_steps = self.run_episode(params)
+
+            total_reward += episode_reward
+            total_steps += episode_steps
+
+        return total_reward, total_steps
+
+class Problem(_Problem):
+
+    def __init__(self, env_name, seed=None):
+
+        _Problem.__init__(self, env_name, seed)
+
+    def eval_params(self, params, episodes=10):
+        '''
+        Evaluates parameters for a given number of episodes
+        Inputs:
+            params   paramters to evaluate
+            episodes number of episodes to run
+        Returns: total rewards and total number of steps taken
+        '''
+
+        total_reward = 0
+        total_steps = 0
+
+        for _ in range(episodes):
+
+            episode_reward, episode_steps = self.run_episode(params)
+
+            total_reward += episode_reward
+            total_steps += episode_steps
+
+        return total_reward, total_steps
