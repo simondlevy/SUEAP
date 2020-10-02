@@ -74,10 +74,11 @@ class _Individual:
     A class to support sorting of individuals in a population
     '''
 
-    def __init__(self, x, f=None):
+    def __init__(self, x, c, f=None):
 
         self.x = x
-        self.f = f
+        self.c = c
+        self.f= f
 
         self.S        = None
         self.rank     = None
@@ -85,8 +86,11 @@ class _Individual:
         self.distance = None
 
     def __lt__(self, other):
+        '''
+        p < q means p dominates q.
+        '''
 
-        return np.all(self.f < other.f)
+        return np.all(self.c(self.f, other.f))
 
     def __str__(self):
 
@@ -191,7 +195,8 @@ class NSGA2(GA):
         GA.start_workers(self, ngen)
 
         # Create initial population and get its fitness
-        P = self._eval_fits(set([_Individual(self.problem.new_params()) for _ in range(self.pop_size)]), show_progress)
+        P = self._eval_fits(set([_Individual(self.problem.new_params(), self.problem.fitcmp) 
+            for _ in range(self.pop_size)]), show_progress)
 
         # Create empty child population
         Q = set()
@@ -220,7 +225,7 @@ class NSGA2(GA):
         fs, _ = GA.compute_fitness(self, [p.x for p in P], show_progress)
 
         # Rebuild population with parameters and fitnesses
-        return set([_Individual(x, f) for x,f in fs])
+        return set([_Individual(x, self.problem.fitcmp, f) for x,f in fs])
 
     def make_new_pop(self, P, g, G):
         '''
@@ -249,8 +254,8 @@ class NSGA2(GA):
         # recombination (crossover) and mutation
         for _ in range(N):
             child = self._pick(selected)
-            q = _Individual((self.problem.crossover(child, self._pick(selected)) 
-                if np.random.random()<self.problem.pc else child.x))
+            x = self.problem.crossover(child, self._pick(selected)) if np.random.random()<self.problem.pc else child.x
+            q = _Individual(x, self.problem.fitcmp)
             self.problem.mutate(q, g, G) # scale mutation by fraction of generations completed
             Q.add(q)
 

@@ -25,6 +25,10 @@ class Fon:
         return fitness, steps
 
     @staticmethod
+    def fitcmp(f1, f2):
+        return f1 < f2
+
+    @staticmethod
     def mutate(p, g, G):
         p.x += np.random.randn(3) * Fon.PM * (G-g)/G
 
