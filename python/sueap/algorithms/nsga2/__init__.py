@@ -89,7 +89,6 @@ class _Individual:
         '''
         p < q means p dominates q.
         '''
-
         return np.all(self.c(self.f, other.f))
 
     def __str__(self):
