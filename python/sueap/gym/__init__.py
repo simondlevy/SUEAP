@@ -25,7 +25,7 @@ class _Problem:
         self.seed = seed
         self.env_name = env_name
 
-    def eval_params(self, params, episodes):
+    def eval_params(self, params, episodes=10):
 
         total_reward = self.initial_reward()
         total_steps = 0
@@ -62,7 +62,11 @@ class _Problem:
                 env.render()
 
             # Do environment step
-            obs, reward, done, _ = self.env(env, action)
+            obs, reward, done, _ = self.step(env, action)
+
+            print(obs)
+            print(reward)
+            print(done)
 
             episode_reward += reward
             episode_steps += 1
@@ -105,5 +109,4 @@ class Problem(_Problem):
     def step(self, env, action):
 
         return env.step(action)
-
 
