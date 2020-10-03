@@ -41,7 +41,7 @@ class _Problem:
 
     def run_episode(self, params, render=False):
 
-        episode_reward = self.initial_reward
+        episode_reward = self.initial_reward()
         episode_steps = 0
 
         # Build env
@@ -63,10 +63,6 @@ class _Problem:
 
             # Do environment step
             obs, reward, done, _ = self.step(env, action)
-
-            print(obs)
-            print(reward)
-            print(done)
 
             episode_reward += reward
             episode_steps += 1
