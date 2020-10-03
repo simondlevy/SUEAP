@@ -180,7 +180,7 @@ class NSGA2(GA):
         # Plot runs on main thread
         plotter.start() 
 
-    def run(self, ngen, reporter, show_progress):
+    def run(self, ngen, reporter, show_progress=True):
 
         # Set up communication with workers
         GA.start_workers(self, ngen)
