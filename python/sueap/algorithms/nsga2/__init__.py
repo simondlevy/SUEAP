@@ -254,8 +254,8 @@ class NSGA2(GA):
         for _ in range(N):
             child = self._pick(selected)
             x = self.problem.crossover(child, self._pick(selected)) if np.random.random()<self.problem.pc else child.x
+            x = self.problem.mutate(x, g, G) # scale mutation by fraction of generations completed
             q = _Individual(x, self.problem.fitcmp)
-            self.problem.mutate(q, g, G) # scale mutation by fraction of generations completed
             Q.add(q)
 
         return Q

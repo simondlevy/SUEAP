@@ -29,8 +29,8 @@ class Fon:
         return f1 < f2
 
     @staticmethod
-    def mutate(p, g, G):
-        p.x += np.random.randn(3) * Fon.PM * (G-g)/G
+    def mutate(x, g, G):
+        return x + np.random.randn(3) * Fon.PM * (G-g)/G
 
     @property
     def fmin(self):
